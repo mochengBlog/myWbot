@@ -4,9 +4,12 @@
 import signal
 from argparse import ArgumentParser
 
+import requests
+
 from base.func_report_reminder import ReportReminder
 from configuration import Config
 from constants import ChatType
+from mc.getUrlTest import get_weather_api
 from robot import Robot, __version__
 from wcferry import Wcf
 
@@ -18,12 +21,12 @@ def weather_report(robot: Robot) -> None:
     # 获取接收人
     receivers = ["filehelper"]
 
-    # 获取天气，需要自己实现，可以参考 https://gitee.com/lch0821/WeatherScrapy 获取天气。
-    report = "这就是获取到的天气情况了"
+
+    report = get_weather_api()
 
     for r in receivers:
         robot.sendTextMsg(report, r)
-        # robot.sendTextMsg(report, r, "notify@all")   # 发送消息并@所有人
+        robot.sendTextMsg(report, r, "notify@all")   # 发送消息并@所有人
 
 
 def main(chat_type: int):
@@ -47,13 +50,13 @@ def main(chat_type: int):
     robot.enableReceivingMsg()  # 加队列
 
     # 每天 7 点发送天气预报
-    robot.onEveryTime("07:00", weather_report, robot=robot)
+    robot.onEveryTime("17:00", weather_report, robot=robot)
 
     # 每天 7:30 发送新闻
-    robot.onEveryTime("07:30", robot.newsReport)
+    robot.onEveryTime("08:30", robot.newsReport)
 
     # 每天 16:30 提醒发日报周报月报
-    robot.onEveryTime("16:30", ReportReminder.remind, robot=robot)
+    robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
