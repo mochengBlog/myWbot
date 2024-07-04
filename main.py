@@ -18,15 +18,15 @@ def weather_report(robot: Robot) -> None:
     """模拟发送天气预报
     """
 
-    # 获取接收人
-    receivers = ["filehelper"]
-
-
-    report = get_weather_api()
-
+    # 获取接收人 文件传输助手
+    # receivers = ["filehelper"]
+    #
+    receivers = robot.config.WEATHER_REMINDERS
+    if not receivers:
+        receivers = ["filehelper"]
     for r in receivers:
-        robot.sendTextMsg(report, r)
-        robot.sendTextMsg(report, r, "notify@all")   # 发送消息并@所有人
+        robot.sendTextMsg(get_weather_api(), r)
+        # robot.sendTextMsg(report, r, "notify@all")   # 发送消息并@所有人
 
 
 def main(chat_type: int):

@@ -232,7 +232,6 @@ class Robot(Job):
     def keepRunningAndBlockProcess(self) -> None:
         """
         保持机器人运行，不让进程退出
-
         """
         while True:
             self.runPendingJobs()
