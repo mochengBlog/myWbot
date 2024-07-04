@@ -21,7 +21,7 @@ def weather_report(robot: Robot) -> None:
     # 获取接收人 文件传输助手
     # receivers = ["filehelper"]
     #
-    receivers = robot.config.WEATHER_REMINDERS
+    receivers = robot.config.REPORT_REMINDERS
     if not receivers:
         receivers = ["filehelper"]
     for r in receivers:
