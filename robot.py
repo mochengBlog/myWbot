@@ -82,9 +82,6 @@ class Robot(Job):
         :param msg: 微信消息结构
         :return: 处理状态，`True` 成功，`False` 失败
         """
-        content = msg.content
-        if content == "#学习":
-            self.sendImage(McTest.test_send_image(), msg.roomid)
 
         return self.toChitchat(msg)
 
@@ -143,18 +140,20 @@ class Robot(Job):
         receivers = msg.roomid
         self.sendTextMsg(content, receivers, msg.sender)
         """
-
+        content = msg.content
         # 群聊消息
         if msg.from_group():
             # 如果在群里被 @
             if msg.roomid not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
                 return
-
             if msg.is_at(self.wxid):  # 被@
                 self.toAt(msg)
 
             else:  # 其他消息
-                self.toChengyu(msg)
+                if content == "#学习":
+                    self.sendImage(McTest.test_send_image(), msg.roomid)
+                else:
+                    self.toChengyu(msg)
 
             return  # 处理完群聊信息，后面就不需要处理了
 
