@@ -226,6 +226,7 @@ class Robot(Job):
         :param filePath :  图片路径
         :param receiver: 接收人wxid或者群id
         """
+        self.LOG.info(f"获取图片地址 {filePath}")
         self.wcf.send_image(filePath, receiver)
 
     def getAllContacts(self) -> dict:
