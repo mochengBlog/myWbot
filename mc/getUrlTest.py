@@ -15,8 +15,10 @@ def test_send_image() -> None:
     try:
         response = requests.get("https://api.lolimi.cn/API/meinv/api.php")
         data = response.json()
+
         image_url = data["data"]["image"]
-        return image_url
+
+        return image_url + ".jpg"
 
     except Exception as e:
         print(f"处理图片时发生错误: {e}")
