@@ -30,7 +30,7 @@ def weather_report(robot: Robot) -> None:
 
 def send_image(robot: Robot) -> None:
 
-    robot.sendImage(McTest.get_weather_api(),"filehelper")
+    robot.sendImage(McTest.test_send_image(),"filehelper")
 
 
 
