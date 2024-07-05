@@ -150,7 +150,7 @@ class Robot(Job):
                 self.toAt(msg)
 
             else:  # 其他消息
-                if content == "#学习":
+                if content == "#学习一个知识点":
                     self.sendImage(McTest.test_send_image(), msg.roomid)
                 else:
                     self.toChengyu(msg)
