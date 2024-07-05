@@ -30,17 +30,10 @@ def weather_report(robot: Robot) -> None:
 
 def send_image(robot: Robot) -> None:
 
+    robot.sendImage(McTest.get_weather_api(),"filehelper")
 
-    receivers = robot.config.REPORT_REMINDERS
-    receivers = ["filehelper"]
-    robot.sendTextMsg("测试图片！", "filehelper")
-    Wcf.send_image(McTest.test_send_image(), "filehelper")
-    # if not receivers:
-    #     receivers = ["filehelper"]
-    #     robot.sendTextMsg(McTest.test_send_image(), r)
-    # for r in receivers:
-    #     robot.sendTextMsg(McTest.test_send_image(), r)
-        # robot.sendTextMsg(report, r, "notify@all")   # 发送消息并@所有人
+
+
 
 def main(chat_type: int):
     config = Config()

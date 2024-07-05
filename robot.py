@@ -221,6 +221,13 @@ class Robot(Job):
             self.LOG.info(f"To {receiver}: {ats}\r{msg}")
             self.wcf.send_text(f"{ats}\n\n{msg}", receiver, at_list)
 
+    def sendImage(self, filePath: str, receiver: str) -> None:
+        """ 发送消息
+        :param filePath :  图片路径
+        :param receiver: 接收人wxid或者群id
+        """
+        self.wcf.send_image(filePath, receiver)
+
     def getAllContacts(self) -> dict:
         """
         获取联系人（包括好友、公众号、服务号、群成员……）
