@@ -150,8 +150,12 @@ class Robot(Job):
                 self.toAt(msg)
 
             else:  # 其他消息
-                if content == "#学习一个知识点":
-                    self.sendImage(McTest.test_send_image(), msg.roomid)
+                if "#壁纸" in content:
+                    if content == "#壁纸":
+                        self.sendTextMsg("请输入壁纸关键字:"+McTest.get_type_enum(), msg.roomid)
+                        return
+                    self.sendImage(McTest.test_send_image(content), msg.roomid)
+
                 else:
                     self.toChengyu(msg)
 

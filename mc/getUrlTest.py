@@ -5,6 +5,8 @@ import time
 import random
 from wcferry import Wcf
 
+from mc import typeEnum
+
 receivers = ["filehelper"]
 
 
@@ -14,12 +16,20 @@ def get_weather_api() -> str:
     return response.text
 
 
-def test_send_image() -> str:
+def test_send_image(select_type: str = "美女") -> str:
     try:
         # 获取图片 URL
-        response = requests.get("https://api.lolimi.cn/API/meinv/api.php")
-        data = response.json()
-        image_url = data["data"]["image"]
+        # response = requests.get("httpss://api.lolimi.cn/API/meinv/api.php")
+        # data = response.json()
+        # image_url = data["data"]["image"]
+        # 默认为 美女
+        value = typeEnum.get_category_name(select_type)
+
+        # 拼接URL "https://api.lolimi.cn/API/guang/api.php?n="+type+"&type=text"
+        url = "https://api.lolimi.cn/API/guang/api.php?n=" + str(value) + "&type=text"
+
+        response = requests.get(url)
+        image_url = response.content
 
         # 生成文件名
         timestamp = str(int(time.time()))
@@ -49,10 +59,16 @@ def test_send_image() -> str:
         print(f"处理图片时发生错误: {e}")
 
 
+def get_type_enum() -> str:
+    # print(typeEnum.category_mapping.keys())
+    return '|'.join([str(i) for i in typeEnum.category_mapping.keys()])
+
+
 def test_send_audio() -> None:
     Wcf.send_image()
 
 
 if __name__ == '__main__':
-    print(test_send_image())
+    print(get_type_enum())
+    # print(test_send_image("bia 城市"))
     # print(get_weather_api())

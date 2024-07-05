@@ -4,7 +4,6 @@
 import signal
 from argparse import ArgumentParser
 import mc.getUrlTest as McTest
-import requests
 
 from base.func_report_reminder import ReportReminder
 from configuration import Config
@@ -31,7 +30,7 @@ def weather_report(robot: Robot) -> None:
 
 
 def send_image2(robot: Robot) -> None:
-    robot.sendImage(McTest.test_send_image(), "filehelper")
+    robot.sendImage(McTest.test_send_image(""), "filehelper")
 
 
 def main(chat_type: int):
