@@ -28,6 +28,19 @@ def weather_report(robot: Robot) -> None:
         robot.sendTextMsg(McTest.get_weather_api(), r)
         # robot.sendTextMsg(report, r, "notify@all")   # 发送消息并@所有人
 
+def send_image(robot: Robot) -> None:
+
+
+    receivers = robot.config.REPORT_REMINDERS
+    receivers = ["filehelper"]
+    robot.sendTextMsg("测试图片！", "filehelper")
+    Wcf.send_image(McTest.test_send_image(), "filehelper")
+    # if not receivers:
+    #     receivers = ["filehelper"]
+    #     robot.sendTextMsg(McTest.test_send_image(), r)
+    # for r in receivers:
+    #     robot.sendTextMsg(McTest.test_send_image(), r)
+        # robot.sendTextMsg(report, r, "notify@all")   # 发送消息并@所有人
 
 def main(chat_type: int):
     config = Config()
@@ -50,6 +63,7 @@ def main(chat_type: int):
     # robot.enableRecvMsg()     # 可能会丢消息？
     robot.enableReceivingMsg()  # 加队列
 
+    send_image()
     # 每天 7 点发送天气预报
     robot.onEveryTime("17:00", weather_report, robot=robot)
 
@@ -58,7 +72,8 @@ def main(chat_type: int):
 
     # 每天 18:00 提醒发日报周报月报
     robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
-    McTest.test_send_image("filehelper")
+
+
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
 
