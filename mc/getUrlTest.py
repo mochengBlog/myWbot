@@ -18,7 +18,7 @@ def test_send_image() -> str:
 
         image_url = data["data"]["image"]
 
-        return image_url + ".jpg"
+        return "http://img5.adesk.com/60ede5c9e7bce736620aadc1?sign=6c72d32bf970d85ffdc71c39582897ea&t=6687a872.jpg"
 
     except Exception as e:
         print(f"处理图片时发生错误: {e}")
