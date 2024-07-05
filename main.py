@@ -35,7 +35,8 @@ def send_image(robot: Robot) -> None:
 
 
 def send_image2(robot: Robot) -> None:
-    robot.sendImage("C:\\Users\\Administrator\\Desktop\\20240705152554.jpg", "filehelper")
+
+    robot.sendImage(McTest.test_send_image(), "filehelper")
 
 
 def main(chat_type: int):
@@ -58,7 +59,6 @@ def main(chat_type: int):
     # robot.enableRecvMsg()     # 可能会丢消息？
     robot.enableReceivingMsg()  # 加队列
 
-    send_image(robot)
     send_image2(robot)
     # 每天 7 点发送天气预报
     robot.onEveryTime("17:00", weather_report, robot=robot)
