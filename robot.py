@@ -4,6 +4,7 @@ import logging
 import re
 import time
 import xml.etree.ElementTree as ET
+import mc.getUrlTest as McTest
 from queue import Empty
 from threading import Thread
 from base.func_zhipu import ZhiPu
@@ -81,6 +82,10 @@ class Robot(Job):
         :param msg: 微信消息结构
         :return: 处理状态，`True` 成功，`False` 失败
         """
+        content = msg.content
+        if content == "#学习":
+            self.sendImage(McTest.test_send_image(), msg.roomid)
+
         return self.toChitchat(msg)
 
     def toChengyu(self, msg: WxMsg) -> bool:

@@ -30,12 +30,7 @@ def weather_report(robot: Robot) -> None:
         # robot.sendTextMsg(report, r, "notify@all")   # 发送消息并@所有人
 
 
-def send_image(robot: Robot) -> None:
-    robot.sendImage(McTest.test_send_image(), "filehelper")
-
-
 def send_image2(robot: Robot) -> None:
-
     robot.sendImage(McTest.test_send_image(), "filehelper")
 
 
