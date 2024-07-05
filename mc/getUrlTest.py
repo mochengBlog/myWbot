@@ -5,13 +5,13 @@ from wcferry import Wcf
 receivers = ["filehelper"]
 
 
-def get_weather_api() -> None:
+def get_weather_api() -> str:
     url = "https://hm.suol.cc/API/tq.php?msg=%E5%8C%97%E4%BA%AC&n=1"
     response = requests.get(url)
     return response.text
 
 
-def test_send_image() -> None:
+def test_send_image() -> str:
     try:
         response = requests.get("https://api.lolimi.cn/API/meinv/api.php")
         data = response.json()
