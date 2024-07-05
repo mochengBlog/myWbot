@@ -3,13 +3,13 @@
 
 import signal
 from argparse import ArgumentParser
-
+import mc.getUrlTest as McTest
 import requests
 
 from base.func_report_reminder import ReportReminder
 from configuration import Config
 from constants import ChatType
-from mc.getUrlTest import get_weather_api
+
 from robot import Robot, __version__
 from wcferry import Wcf
 
@@ -25,7 +25,7 @@ def weather_report(robot: Robot) -> None:
     if not receivers:
         receivers = ["filehelper"]
     for r in receivers:
-        robot.sendTextMsg(get_weather_api(), r)
+        robot.sendTextMsg(McTest.get_weather_api(), r)
         # robot.sendTextMsg(report, r, "notify@all")   # 发送消息并@所有人
 
 
@@ -45,6 +45,7 @@ def main(chat_type: int):
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
 
+
     # 接收消息
     # robot.enableRecvMsg()     # 可能会丢消息？
     robot.enableReceivingMsg()  # 加队列
@@ -52,12 +53,12 @@ def main(chat_type: int):
     # 每天 7 点发送天气预报
     robot.onEveryTime("17:00", weather_report, robot=robot)
 
-    # 每天 7:30 发送新闻
+    # 每天 8:30 发送新闻
     robot.onEveryTime("08:30", robot.newsReport)
 
-    # 每天 16:30 提醒发日报周报月报
+    # 每天 18:00 提醒发日报周报月报
     robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
-
+    McTest.test_send_image("filehelper")
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
 
