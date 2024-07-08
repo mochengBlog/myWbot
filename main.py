@@ -55,7 +55,7 @@ def main(chat_type: int):
 
     send_image2(robot)
     # 每天 7 点发送天气预报
-    robot.onEveryTime("17:00", weather_report, robot=robot)
+    robot.onEveryTime("07:00", weather_report, robot=robot)
 
     # 每天 8:30 发送新闻
     robot.onEveryTime("08:30", robot.newsReport)
