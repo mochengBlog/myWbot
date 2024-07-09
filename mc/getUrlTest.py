@@ -17,6 +17,20 @@ def get_weather_api() -> str:
 
 
 def test_send_image(select_type: str = "美女") -> str:
+    return ""
+
+
+def test_Chouq() -> str:
+    url = "https://api.lolimi.cn/API/chouq/api.php"
+    response = requests.get(url)
+    data = response.json()
+    data = data["data"]
+    for key, value in data.items():
+        print(f"{value}\n")
+    return response.text
+
+
+def test_send_image(select_type:str) -> str:
     try:
         # 获取图片 URL
         # response = requests.get("httpss://api.lolimi.cn/API/meinv/api.php")
@@ -71,4 +85,5 @@ def test_send_audio() -> None:
 if __name__ == '__main__':
     print(get_type_enum())
     # print(test_send_image("bia 城市"))
+    print(test_Chouq())
     # print(get_weather_api())

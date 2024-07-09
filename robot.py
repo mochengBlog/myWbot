@@ -156,6 +156,10 @@ class Robot(Job):
                         return
                     self.sendImage(McTest.test_send_image(content), msg.roomid)
 
+                if content == "#学习一个知识点":
+                    self.sendImage(McTest.test_send_image(), msg.roomid)
+                if content == "#抽签":
+                    self.sendChouq(McTest.test_Chouq(), msg)
                 else:
                     self.toChengyu(msg)
 
@@ -236,6 +240,13 @@ class Robot(Job):
         """
         self.LOG.info(f"获取图片地址 {filePath}")
         self.wcf.send_image(filePath, receiver)
+
+    def sendChouq(self, context: str, msg: WxMsg) -> None:
+        """ 发送消息
+        :param context :  结果
+        :param msg:
+        """
+        self.sendTextMsg(context, msg.roomid, msg.sender)
 
     def getAllContacts(self) -> dict:
         """
