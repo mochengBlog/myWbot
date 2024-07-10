@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 import threading
-from flask import Flask
+from flask import Flask, g
 import signal
 from argparse import ArgumentParser
 import mc.getUrlTest as McTest
@@ -15,10 +15,22 @@ from wcferry import Wcf
 
 app = Flask(__name__)
 
+# 在 Flask 应用启动前设置 robot 对象
+def create_robot():
+    config = Config()
+    wcf = Wcf(debug=True)
+    return Robot(config, wcf, args)
+
+@app.before_first_request
+def initialize_robot():
+    g.robot = create_robot()
+
 @app.route('/info')
 def submit():
-    # 在这里执行表单数据处理的逻辑
+    if hasattr(g, 'robot'):
+        g.sendTextMsg("info调用！", "filehelper")
     return 'Form submitted successfully!'
+
 
 def weather_report(robot: Robot) -> None:
     """模拟发送天气预报
