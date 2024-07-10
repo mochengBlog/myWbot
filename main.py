@@ -1,10 +1,11 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 import threading
-from flask import Flask, g
+from flask import Flask
 import signal
 from argparse import ArgumentParser
 import mc.getUrlTest as McTest
+import queue
 
 from base.func_report_reminder import ReportReminder
 from configuration import Config
@@ -13,6 +14,7 @@ from constants import ChatType
 from robot import Robot, __version__
 from wcferry import Wcf
 
+q = queue.Queue()
 app = Flask(__name__)
 
 # 在 Flask 应用启动前设置 robot 对象
@@ -24,8 +26,8 @@ def create_robot():
 
 @app.route('/info')
 def submit():
-    if hasattr(g, 'robot'):
-        g.sendTextMsg("info调用！", "filehelper")
+    myRobot = q.get()
+    myRobot.sendTextMsg("info调用！", "filehelper")
     return 'Form submitted successfully!'
 
 
@@ -50,8 +52,7 @@ def send_image2(robot: Robot) -> None:
 
 
 def main(chat_type: int):
-    flask_thread = threading.Thread(target=run_flask_app)
-    flask_thread.start()
+
     config = Config()
     wcf = Wcf(debug=True)
 
@@ -62,10 +63,14 @@ def main(chat_type: int):
 
     signal.signal(signal.SIGINT, handler)
 
+    flask_thread = threading.Thread(target=run_flask_app)
+    flask_thread.start()
+
     robot = Robot(config, wcf, chat_type)
+
     robot.LOG.info(f"WeChatRobot【{__version__}】成功启动···")
-    g.robot = robot
-    robot.LOG.info(f"WeChatRobot存入g对象···")
+
+
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
 
@@ -85,6 +90,7 @@ def main(chat_type: int):
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
+    q.put(robot)
     flask_thread.join()
 
 
