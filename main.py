@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+import threading
+from flask import Flask
 import signal
 from argparse import ArgumentParser
 import mc.getUrlTest as McTest
@@ -12,6 +13,12 @@ from constants import ChatType
 from robot import Robot, __version__
 from wcferry import Wcf
 
+app = Flask(__name__)
+
+@app.route('/info')
+def submit():
+    # 在这里执行表单数据处理的逻辑
+    return 'Form submitted successfully!'
 
 def weather_report(robot: Robot) -> None:
     """模拟发送天气预报
@@ -34,6 +41,8 @@ def send_image2(robot: Robot) -> None:
 
 
 def main(chat_type: int):
+    flask_thread = threading.Thread(target=run_flask_app)
+    flask_thread.start()
     config = Config()
     wcf = Wcf(debug=True)
 
@@ -65,6 +74,10 @@ def main(chat_type: int):
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
+
+
+def run_flask_app():
+    app.run()
 
 
 if __name__ == "__main__":
