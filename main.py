@@ -5,7 +5,8 @@ from flask import Flask
 import signal
 from argparse import ArgumentParser
 import mc.getUrlTest as McTest
-import queue
+from threading import Thread
+import telebot
 
 from base.func_report_reminder import ReportReminder
 from configuration import Config
@@ -13,22 +14,6 @@ from constants import ChatType
 
 from robot import Robot, __version__
 from wcferry import Wcf
-
-q = queue.Queue()
-app = Flask(__name__)
-
-# 在 Flask 应用启动前设置 robot 对象
-def create_robot():
-    config = Config()
-    wcf = Wcf(debug=True)
-    return Robot(config, wcf, args)
-
-
-@app.route('/info')
-def submit():
-    myRobot = q.get()
-    myRobot.sendTextMsg("info调用！", "filehelper")
-    return 'Form submitted successfully!'
 
 
 def weather_report(robot: Robot) -> None:
@@ -51,11 +36,28 @@ def send_image2(robot: Robot) -> None:
     robot.sendImage(McTest.test_send_image(""), "filehelper")
 
 
+bot = telebot.TeleBot('6977364720:AAFNH1GGTfuk6EMQdTyY_k0catMJHfyCxEU')
+
+
+def start_bot():
+    bot.infinity_polling()
+
+
+@bot.message_handler(func=lambda msg: True)
+def echo_all(message):
+    print(message)
+    print(message.text)
+    bot.reply_to(message, message.text)
+
+
 def main(chat_type: int):
+    # 创建一个线程来运行 bot
+    bot_thread = Thread(target=start_bot)
+    bot_thread.daemon = True  # 设置为守护线程，这样主线程结束时，子线程也会结束
+    bot_thread.start()
 
     config = Config()
     wcf = Wcf(debug=True)
-
 
     def handler(sig, frame):
         wcf.cleanup()  # 退出前清理环境
@@ -63,13 +65,9 @@ def main(chat_type: int):
 
     signal.signal(signal.SIGINT, handler)
 
-    flask_thread = threading.Thread(target=run_flask_app)
-    flask_thread.start()
-
     robot = Robot(config, wcf, chat_type)
 
     robot.LOG.info(f"WeChatRobot【{__version__}】成功启动···")
-
 
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
@@ -90,12 +88,6 @@ def main(chat_type: int):
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
-    q.put(robot)
-    flask_thread.join()
-
-
-def run_flask_app():
-    app.run()
 
 
 if __name__ == "__main__":
