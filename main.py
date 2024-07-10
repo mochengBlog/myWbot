@@ -74,6 +74,7 @@ def main(chat_type: int):
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
+    flask_thread.join()
 
 
 def run_flask_app():
