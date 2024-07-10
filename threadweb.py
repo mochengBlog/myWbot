@@ -11,7 +11,10 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-
+@app.route('/info')
+def submit():
+    # 在这里执行表单数据处理的逻辑
+    return 'Form submitted successfully!'
 
 def main(chat_type: int):
     flask_thread = threading.Thread(target=run_flask_app)
