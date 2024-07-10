@@ -1,9 +1,11 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+import threading
+from flask import Flask
 import signal
 from argparse import ArgumentParser
 import mc.getUrlTest as McTest
+
 
 from base.func_report_reminder import ReportReminder
 from configuration import Config
@@ -34,6 +36,8 @@ def send_image2(robot: Robot) -> None:
 
 
 def main(chat_type: int):
+
+
     config = Config()
     wcf = Wcf(debug=True)
 
@@ -44,6 +48,7 @@ def main(chat_type: int):
     signal.signal(signal.SIGINT, handler)
 
     robot = Robot(config, wcf, chat_type)
+
     robot.LOG.info(f"WeChatRobot【{__version__}】成功启动···")
 
     # 机器人启动发送测试消息
@@ -55,7 +60,7 @@ def main(chat_type: int):
 
     send_image2(robot)
     # 每天 7 点发送天气预报
-    robot.onEveryTime("07:00", weather_report, robot=robot)
+    robot.onEveryTime("08:00", weather_report, robot=robot)
 
     # 每天 8:30 发送新闻
     robot.onEveryTime("08:30", robot.newsReport)
