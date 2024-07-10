@@ -21,9 +21,6 @@ def create_robot():
     wcf = Wcf(debug=True)
     return Robot(config, wcf, args)
 
-@app.before_first_request
-def initialize_robot():
-    g.robot = create_robot()
 
 @app.route('/info')
 def submit():
@@ -58,6 +55,7 @@ def main(chat_type: int):
     config = Config()
     wcf = Wcf(debug=True)
 
+
     def handler(sig, frame):
         wcf.cleanup()  # 退出前清理环境
         exit(0)
@@ -66,7 +64,8 @@ def main(chat_type: int):
 
     robot = Robot(config, wcf, chat_type)
     robot.LOG.info(f"WeChatRobot【{__version__}】成功启动···")
-
+    g.robot = robot
+    robot.LOG.info(f"WeChatRobot存入g对象···")
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
 
