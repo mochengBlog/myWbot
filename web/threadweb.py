@@ -3,7 +3,6 @@
 import threading
 import signal
 
-from base.func_report_reminder import ReportReminder
 from configuration import Config
 
 from robot import Robot, __version__
