@@ -5,8 +5,7 @@ from flask import Flask
 import signal
 from argparse import ArgumentParser
 import mc.getUrlTest as McTest
-from threading import Thread
-import telebot
+
 
 from base.func_report_reminder import ReportReminder
 from configuration import Config
@@ -36,25 +35,8 @@ def send_image2(robot: Robot) -> None:
     robot.sendImage(McTest.test_send_image(""), "filehelper")
 
 
-bot = telebot.TeleBot('6977364720:AAFNH1GGTfuk6EMQdTyY_k0catMJHfyCxEU')
-
-
-def start_bot():
-    bot.infinity_polling()
-
-
-@bot.message_handler(func=lambda msg: True)
-def echo_all(message):
-    print(message)
-    print(message.text)
-    bot.reply_to(message, message.text)
-
-
 def main(chat_type: int):
-    # 创建一个线程来运行 bot
-    bot_thread = Thread(target=start_bot)
-    bot_thread.daemon = True  # 设置为守护线程，这样主线程结束时，子线程也会结束
-    bot_thread.start()
+
 
     config = Config()
     wcf = Wcf(debug=True)
@@ -78,7 +60,7 @@ def main(chat_type: int):
 
     send_image2(robot)
     # 每天 7 点发送天气预报
-    robot.onEveryTime("17:00", weather_report, robot=robot)
+    robot.onEveryTime("08:00", weather_report, robot=robot)
 
     # 每天 8:30 发送新闻
     robot.onEveryTime("08:30", robot.newsReport)
