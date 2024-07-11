@@ -4,8 +4,9 @@ import threading
 from flask import Flask
 import signal
 from argparse import ArgumentParser
+import sqlite3
 import mc.getUrlTest as McTest
-
+from threading import Thread, Event
 
 from base.func_report_reminder import ReportReminder
 from configuration import Config
@@ -14,7 +15,7 @@ from constants import ChatType
 from robot import Robot, __version__
 from wcferry import Wcf
 
-
+app = Flask(__name__)
 def weather_report(robot: Robot) -> None:
     """模拟发送天气预报
     """
@@ -36,8 +37,6 @@ def send_image2(robot: Robot) -> None:
 
 
 def main(chat_type: int):
-
-
     config = Config()
     wcf = Wcf(debug=True)
 
@@ -72,8 +71,14 @@ def main(chat_type: int):
     robot.keepRunningAndBlockProcess()
 
 
+
+def apptest():
+    app.run(host='0.0.0.0', port=8888, debug=True)
+
 if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument('-c', type=int, default=0, help=f'选择模型参数序号: {ChatType.help_hint()}')
-    args = parser.parse_args().c
-    main(args)
+    #parser = ArgumentParser()
+    #parser.add_argument('-c', type=int, default=0, help=f'选择模型参数序号: {ChatType.help_hint()}')
+    #args = parser.parse_args().c
+
+    Thread(target=apptest, args=[0]).start()
+    main(3)
