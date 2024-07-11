@@ -34,9 +34,15 @@ def weather_report(robot: Robot) -> None:
 
 def send_image2(robot: Robot) -> None:
     robot.sendImage(McTest.test_send_image(""), "filehelper")
-
+@app.route('/test')
+def send_message_to_robot():
+    robot.LOG.info(f"执行测试...")
+    robot.sendTextMsg("Hello from Flask!", "filehelper")
+    return "OK"
 
 def main(chat_type: int):
+    chat_type =3
+    global robot, wcf  # 确保这些变量是全局的，以便在线程中访问
     config = Config()
     wcf = Wcf(debug=True)
 
@@ -57,28 +63,19 @@ def main(chat_type: int):
     # robot.enableRecvMsg()     # 可能会丢消息？
     robot.enableReceivingMsg()  # 加队列
 
-    send_image2(robot)
-    # 每天 7 点发送天气预报
-    robot.onEveryTime("08:00", weather_report, robot=robot)
-
-    # 每天 8:30 发送新闻
-    robot.onEveryTime("08:30", robot.newsReport)
-
-    # 每天 18:00 提醒发日报周报月报
-    robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
-
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
 
 
-
-def apptest():
-    app.run(host='0.0.0.0', port=8888, debug=True)
+def start_flask_app():
+    app.run(host='0.0.0.0', port=8888, debug=True, use_reloader=False)
 
 if __name__ == "__main__":
-    #parser = ArgumentParser()
-    #parser.add_argument('-c', type=int, default=0, help=f'选择模型参数序号: {ChatType.help_hint()}')
-    #args = parser.parse_args().c
-
-    Thread(target=apptest, args=[0]).start()
+    # 创建并启动 Flask 应用的线程
+    flask_thread = threading.Thread(target=start_flask_app)
+    flask_thread.daemon = True  # 设置为守护线程
+    # 启动线程
+    flask_thread.start()
+    # 创建并启动 main 函数的线程
     main(3)
+
