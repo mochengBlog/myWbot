@@ -6,6 +6,7 @@ import signal
 from argparse import ArgumentParser
 import sqlite3
 import mc.getUrlTest as McTest
+import mc.groupSign as groupSign
 from threading import Thread, Event
 
 from base.func_report_reminder import ReportReminder
@@ -32,8 +33,29 @@ def weather_report(robot: Robot) -> None:
         # robot.sendTextMsg(report, r, "notify@all")   # 发送消息并@所有人
 
 
-def send_image2(robot: Robot) -> None:
-    robot.sendImage(McTest.test_send_image(""), "filehelper")
+def init_group_info(robot: Robot) -> None:
+    receivers = robot.config.NEWS
+
+    for r in receivers:
+        group_info = robot.getRoomInfo(r)
+        # 初始化群聊 {'wxid_1538135380812': '莫城', 'wxid_ej6qv9p6r6bg22': '乌苏里江畔', 'wxid_ytllv9po50bj12': 'CikL.'}
+        for wxid, name in group_info.items():
+            groupSign.init_group_info(r, wxid, name)
+
+    robot.LOG.info(f"初始化群聊成功")
+
+def reminderSignInfo(robot: Robot) -> None:
+    receivers = robot.config.NEWS
+
+    for r in receivers:
+        info = groupSign.reminderSignInfo(r)
+        robot.sendTextMsg(McTest.get_weather_api(), r)
+
+
+
+    robot.LOG.info(f"初始化群聊成功")
+
+
 @app.route('/test')
 def send_message_to_robot():
     robot.LOG.info(f"执行测试...")
@@ -55,13 +77,29 @@ def main(chat_type: int):
     robot = Robot(config, wcf, chat_type)
 
     robot.LOG.info(f"WeChatRobot【{__version__}】成功启动···")
+    # 初始化群聊
+    init_group_info(robot)
 
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
 
+
     # 接收消息
     # robot.enableRecvMsg()     # 可能会丢消息？
     robot.enableReceivingMsg()  # 加队列
+    # 每天 8 点发送天气预报
+    robot.onEveryTime("08:00", weather_report, robot=robot)
+    # 每天 7 点初始化群聊
+    robot.onEveryTime("07:00", init_group_info, robot=robot)
+
+    # 每天 8:30 发送新闻
+    robot.onEveryTime("08:30", robot.newsReport)
+
+    # 每天 18:00 提醒发日报周报月报
+    robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
+
+    # 每天 23:00 提醒 签到详情
+    robot.onEveryTime("23:00", reminderSignInfo, robot=robot)
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()

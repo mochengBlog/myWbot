@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-
+import datetime
 import logging
 import re
 import time
 import xml.etree.ElementTree as ET
+
+import wcferry
+
 import mc.getUrlTest as McTest
 from queue import Empty
 from threading import Thread
@@ -23,6 +26,8 @@ from constants import ChatType
 from job_mgmt import Job
 
 __version__ = "39.0.10.1"
+
+from mc import groupSign
 
 
 class Robot(Job):
@@ -156,6 +161,9 @@ class Robot(Job):
                         return
                     self.sendImage(McTest.test_send_image(content), msg.roomid)
 
+                if "#签到" in content:
+                    groupSign.insert(msg.roomid, msg.sender, "已签到", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
                 if content == "#学习一个知识点":
                     self.sendImage(McTest.test_send_image(), msg.roomid)
                 if content == "#抽签":
@@ -248,6 +256,12 @@ class Robot(Job):
         """
         self.sendTextMsg(context, msg.roomid, msg.sender)
 
+    def getRoomInfo(self, roomid: str) -> dict:
+        """ 发送消息
+        :param msg:
+        """
+        # 获取所有群成员及名称
+        return  self.wcf.get_chatroom_members(roomid)
     def getAllContacts(self) -> dict:
         """
         获取联系人（包括好友、公众号、服务号、群成员……）
