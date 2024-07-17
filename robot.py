@@ -162,7 +162,8 @@ class Robot(Job):
                     self.sendImage(McTest.test_send_image(content), msg.roomid)
 
                 if "#签到" in content:
-                    groupSign.insert(msg.roomid, msg.sender, "已签到", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+                    groupSign.insert(msg.roomid, msg.sender, "已签到")
 
                 if content == "#学习一个知识点":
                     self.sendImage(McTest.test_send_image(), msg.roomid)
