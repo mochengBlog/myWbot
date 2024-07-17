@@ -167,9 +167,12 @@ class Robot(Job):
                     self.sendTextMsg("签到成功",
                                      msg.roomid, msg.sender)
                 if "#补签" in content:
-                    groupSign.insertBQ(msg.roomid, msg.sender, "已签到",content)
-                    self.sendTextMsg("补签成功",
+                    if "昨天" in content or "前天" in content:
+                        groupSign.insertBQ(msg.roomid, msg.sender, "已签到",content)
+                        self.sendTextMsg("补签成功",
                                  msg.roomid, msg.sender)
+                    else:
+                        self.sendTextMsg("暂不支持其他天补签", msg.roomid)
                 if content == "#学习一个知识点":
                     self.sendImage(McTest.test_send_image(), msg.roomid)
                 if content == "#抽签":
