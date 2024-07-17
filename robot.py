@@ -160,10 +160,12 @@ class Robot(Job):
                         self.sendTextMsg("请输入壁纸关键字:"+McTest.get_type_enum(), msg.roomid)
                         return
                     self.sendImage(McTest.test_send_image(content), msg.roomid)
-
+                if "#签到规则" in content:
+                    self.sendTextMsg("签到规则为:发送 #签到 即可签到,2点前算作昨天 ; 发送 #补签昨天 即可补签前一日", msg.roomid)
                 if "#签到" in content:
-
                     groupSign.insert(msg.roomid, msg.sender, "已签到")
+                if "#补签" in content:
+                    groupSign.insertBQ(msg.roomid, msg.sender, "已签到",content)
 
                 if content == "#学习一个知识点":
                     self.sendImage(McTest.test_send_image(), msg.roomid)

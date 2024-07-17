@@ -33,6 +33,25 @@ def insert(room_id, vx_id, sign):
     conn.commit()
     conn.close()
 
+def insertBQ(room_id, vx_id, sign,context):
+    if "昨天" in context:
+        date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+    if "前天" in context:
+        date = (datetime.datetime.now() - datetime.timedelta(days=2)).strftime("%Y-%m-%d")
+    conn = dbconn.get_db_connection()
+    c = conn.cursor()
+
+    # 查询是否已经存在
+    c.execute("SELECT * FROM group_sign where room_id = ? and vx_id = ? and date = ?", (room_id, vx_id, date))
+    rows = c.fetchall()
+    if len(rows) == 0:
+        print("插入签到")
+        c.execute("INSERT INTO group_sign (room_id,vx_id,sign,date) VALUES (?,?,?,?)", (room_id, vx_id, sign, date))
+    else:
+        print("更新签到")
+    conn.commit()
+    conn.close()
+
 
 #初始化group_info表
 def init_group_info(room_id, vx_id, name):
