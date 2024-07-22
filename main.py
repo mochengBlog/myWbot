@@ -93,13 +93,13 @@ def main(chat_type: int):
     robot.onEveryTime("07:00", init_group_info, robot=robot)
 
     # 每天 8:30 发送新闻
-    robot.onEveryTime("08:30", robot.newsReport)
+     # robot.onEveryTime("08:30", robot.newsReport)
 
     # 每天 18:00 提醒发日报周报月报
-    robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
+    #  robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
 
     # 每天 23:00 提醒 签到详情
-    robot.onEveryTime("23:00", reminderSignInfo, robot=robot)
+    # robot.onEveryTime("23:00", reminderSignInfo, robot=robot)
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
