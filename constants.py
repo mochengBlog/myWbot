@@ -17,7 +17,7 @@ class ChatType(IntEnum):
         if chat_type in [ChatType.TIGER_BOT.value, ChatType.CHATGPT.value,
                          ChatType.XINGHUO_WEB.value, ChatType.CHATGLM.value,
                          ChatType.BardAssistant.value, ChatType.ZhiPu.value,
-                         ChatType.MCGPTAPI.value]:
+                         ChatType.McGPTAPI.value]:
             return True
         return False
 
