@@ -4,7 +4,7 @@ import requests
 from random import randint
 from datetime import datetime
 class McGPTAPI():
-    GLOBAL_MODEL = "gpt-3.5-turbo"
+    GLOBAL_MODEL = "gpt-4o-mini"
     GLOBAL_URL = "https://api.mihoyo.bf/v1/chat/completions"
     GLOBAL_KEY = "sk-SRSY0XUq4NY4rzEI8e65B4C055F54d729c20Fd13F0557007"
 
