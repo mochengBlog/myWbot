@@ -25,11 +25,11 @@ class McGPTAPI():
         return 'mihayoAI'
 
     def get_answer(self, msg: str, wxid: str, **args) -> str:
-        # self.updateMessage(wxid, str(msg), "user")
+        self.updateMessage(wxid, str(msg), "user")
         rsp = ""
         try:
             payload = {
-                "messages":  [{"role": "user", "content": msg}],
+                "messages": self.conversation_list[wxid],
                 "model": self.model,
                 "temperature": 0.5,
                 "stream": False,
@@ -41,7 +41,7 @@ class McGPTAPI():
             rsp = rsp[2:] if rsp.startswith("\n\n") else rsp
             rsp = rsp.replace("\n\n", "\n")
             self.LOG.error(f"debug-rsp: {rsp}")
-            # self.updateMessage(wxid, rsp, "assistant")
+            self.updateMessage(wxid, rsp, "assistant")
         except Exception as e:
             print(e)
             self.LOG.error(f"{e}: {rsp}")
@@ -65,11 +65,11 @@ class McGPTAPI():
 
 
         # 只存储10条记录，超过滚动清除
-        # i = len(self.conversation_list[wxid])
-        # if i > 10:
-        #     print("滚动清除微信记录：" + wxid)
-        #     # 删除多余的记录，倒着删，且跳过第一个的系统消息
-        #     del self.conversation_list[wxid][1]
+        i = len(self.conversation_list[wxid])
+        if i > 10:
+            print("滚动清除微信记录：" + wxid)
+            # 删除多余的记录，倒着删，且跳过第一个的系统消息
+            del self.conversation_list[wxid][1]
 
 
 if __name__ == "__main__":
