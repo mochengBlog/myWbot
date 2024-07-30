@@ -114,5 +114,9 @@ if __name__ == "__main__":
     # 启动线程
     flask_thread.start()
     # 创建并启动 main 函数的线程
-    main(3)
+
+    parser = ArgumentParser()
+    parser.add_argument('-c', type=int, default=0, help=f'选择模型参数序号: {ChatType.help_hint()}')
+    args = parser.parse_args().c
+    main(args)
 
