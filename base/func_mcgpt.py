@@ -34,11 +34,13 @@ class McGPTAPI():
                 "temperature": 0.5,
                 "stream": False,
             }
+            self.LOG.info(f"debug-payload: {payload}")
             rsp = requests.post(self.url, headers=self.headers, json=payload).json()
 
             rsp = rsp["choices"][0]["message"]["content"].strip()
             rsp = rsp[2:] if rsp.startswith("\n\n") else rsp
             rsp = rsp.replace("\n\n", "\n")
+            self.LOG.info(f"debug-rsp: {rsp}")
             self.updateMessage(wxid, rsp, "assistant")
         except Exception as e:
             print(e)
@@ -53,17 +55,13 @@ class McGPTAPI():
         if wxid not in self.conversation_list.keys():
             question_ = [
                 {"role": "system", "content": "我是ChatGPT，一个由OpenAI训练的大型语言模型。我是一个人工智能助手，可以回答各种问题并提供信息。如果您有任何疑问或需要帮助，请随时告诉我"},
-                {"role": "user", "content": "回答我的问题时，需要把字数控制在200字以内"},
+                # {"role": "user", "content": "回答我的问题时，需要把字数控制在200字以内"},
             ]
             self.conversation_list[wxid] = question_
 
         # 当前问题
         content_question_ = {"role": role, "content": question}
         self.conversation_list[wxid].append(content_question_)
-
-        for cont in self.conversation_list[wxid]:
-            if cont["role"] != "system":
-                continue
 
 
         # 只存储10条记录，超过滚动清除
