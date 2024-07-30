@@ -63,7 +63,6 @@ def send_message_to_robot():
     return "OK"
 
 def main(chat_type: int):
-    chat_type =3
     global robot, wcf  # 确保这些变量是全局的，以便在线程中访问
     config = Config()
     wcf = Wcf(debug=True)

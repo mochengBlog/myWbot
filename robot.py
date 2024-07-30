@@ -11,6 +11,7 @@ import mc.getUrlTest as McTest
 from queue import Empty
 from threading import Thread
 from base.func_zhipu import ZhiPu
+from base.func_mcgpt import McGPTAPI
 
 from wcferry import Wcf, WxMsg
 
@@ -54,9 +55,11 @@ class Robot(Job):
                 self.chat = BardAssistant(self.config.BardAssistant)
             elif chat_type == ChatType.ZhiPu.value and ZhiPu.value_check(self.config.ZhiPu):
                 self.chat = ZhiPu(self.config.ZhiPu)
+            elif chat_type == ChatType.MCGPT.value:
+                self.chat = McGPTAPI()
             else:
                 self.LOG.warning("未配置模型")
-                self.chat = None
+                self.chat = McGPTAPI()
         else:
             if TigerBot.value_check(self.config.TIGERBOT):
                 self.chat = TigerBot(self.config.TIGERBOT)
@@ -71,8 +74,8 @@ class Robot(Job):
             elif ZhiPu.value_check(self.config.ZhiPu):
                 self.chat = ZhiPu(self.config.ZhiPu)
             else:
-                self.LOG.warning("未配置模型")
-                self.chat = None
+                self.LOG.warning("未配置模型,默认走自定义模型")
+                self.chat = McGPTAPI()
 
         self.LOG.info(f"已选择: {self.chat}")
 
