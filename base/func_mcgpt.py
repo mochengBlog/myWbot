@@ -34,13 +34,13 @@ class McGPTAPI():
                 "temperature": 0.5,
                 "stream": False,
             }
-            self.LOG.info(f"debug-payload: {payload}")
+            self.LOG.error(f"debug-payload: {payload}")
             rsp = requests.post(self.url, headers=self.headers, json=payload).json()
 
             rsp = rsp["choices"][0]["message"]["content"].strip()
             rsp = rsp[2:] if rsp.startswith("\n\n") else rsp
             rsp = rsp.replace("\n\n", "\n")
-            self.LOG.info(f"debug-rsp: {rsp}")
+            self.LOG.error(f"debug-rsp: {rsp}")
             self.updateMessage(wxid, rsp, "assistant")
         except Exception as e:
             print(e)
