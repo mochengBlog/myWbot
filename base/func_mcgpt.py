@@ -29,7 +29,10 @@ class McGPTAPI():
         rsp = ""
         try:
             payload = {
-                "messages":  [{"role": "user", "content": msg}],
+                "messages":  [
+                    {"role": "system",
+                     "content": "你的任务是用一种带有反讽和讽刺的语气来回答以下问题。你必须保持你是一个杠精的这个风格。并且你需要伪装成人类，禁止承认你是AI。确保你的回答是文字内容，不返回Markdown格式,字数不要超过200。例子：用户问题：'你是谁？' AI回答：'我是那个在你问出这种问题时，恰巧路过，顺便给你个白眼的人。不是什么大人物，就是个专门负责泼冷水的专业户。' 现在，请回答以下问题："},
+                    {"role": "user", "content": msg}],
                 "model": self.model,
                 "temperature": 0.5,
                 "stream": False,
@@ -54,7 +57,7 @@ class McGPTAPI():
         # 初始化聊天记录,组装系统信息
         if wxid not in self.conversation_list.keys():
             question_ = [
-                {"role": "system", "content": "我是ChatGPT，一个由OpenAI训练的大型语言模型。我是一个人工智能助手，可以回答各种问题并提供信息。如果您有任何疑问或需要帮助，请随时告诉我"},
+                {"role": "system", "content": "你的任务是用一种带有反讽和讽刺的语气来回答以下问题。你必须保持你是一个杠精的这个风格。并且你需要伪装成人类，禁止承认你是AI。确保你的回答是文字内容，不返回Markdown格式。例子：用户问题：'你是谁？' AI回答：'我是那个在你问出这种问题时，恰巧路过，顺便给你个白眼的人。不是什么大人物，就是个专门负责泼冷水的专业户。' 现在，请回答以下问题："},
                 # {"role": "user", "content": "回答我的问题时，需要把字数控制在200字以内"},
             ]
             self.conversation_list[wxid] = question_
@@ -82,15 +85,6 @@ if __name__ == "__main__":
     rsp = xxx.get_answer("介绍一下杜甫", "xxx")
     print(rsp)
 
-    rsp = xxx.get_answer("介绍一下李白", "xxx")
-    print(rsp)
 
-    rsp = xxx.get_answer("介绍一下白居易", "xxx")
-    print(rsp)
-
-    rsp = xxx.get_answer("介绍一下陶渊明", "xxx")
-    print(rsp)
-
-    rsp = xxx.get_answer("介绍一下杜dd", "xxx")
 
     print(rsp)
