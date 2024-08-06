@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 import wcferry
 
 import mc.getUrlTest as McTest
+import mc.func_doImage as doImage
 from queue import Empty
 from threading import Thread
 from base.func_zhipu import ZhiPu
@@ -158,6 +159,9 @@ class Robot(Job):
                 self.toAt(msg)
 
             else:  # 其他消息
+                if "#画画" in content:
+                    content = content.replace("#画画", "")
+                    self.sendImage(doImage.get_image_path(content), msg.roomid)
                 if "#壁纸" in content:
                     if content == "#壁纸":
                         self.sendTextMsg("请输入壁纸关键字:"+McTest.get_type_enum(), msg.roomid)
