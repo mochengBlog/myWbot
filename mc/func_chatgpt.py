@@ -6,9 +6,9 @@ from openai import APIConnectionError, APIError, AuthenticationError, OpenAI
 
 
 def get_response():
-    client = OpenAI(api_key="sk-SRSY0XUq4NY4rzEI8e65B4C055F54d729c20Fd13F0557007",
-                    base_url="https://api.mihoyo.bf/v1/chat/completions",
-                    http_client=httpx.Client(proxy="https://api.mihoyo.bf")
+    client = OpenAI(api_key="sk-gbBE1mOPTTA6OdgU5a28De5cE6744b1d88C750C00397B7A1",
+                    base_url="https://api.freegpt.art/v1/chat/completions",
+                    http_client=httpx.Client(proxy="https://api.freegpt.art")
                     )
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -26,3 +26,4 @@ def get_response():
 
 if __name__ == '__main__':
     get_response()
+

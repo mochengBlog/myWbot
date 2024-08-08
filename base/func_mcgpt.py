@@ -5,8 +5,8 @@ from random import randint
 from datetime import datetime
 class McGPTAPI():
     GLOBAL_MODEL = "gpt-4o-mini"
-    GLOBAL_URL = "https://api.mihoyo.bf/v1/chat/completions"
-    GLOBAL_KEY = "sk-SRSY0XUq4NY4rzEI8e65B4C055F54d729c20Fd13F0557007"
+    GLOBAL_URL = "https://api.freegpt.art/v1/chat/completions"
+    GLOBAL_KEY = "sk-gbBE1mOPTTA6OdgU5a28De5cE6744b1d88C750C00397B7A1"
 
     def __init__(self) -> None:
         self.api_key = McGPTAPI.GLOBAL_KEY
@@ -14,7 +14,7 @@ class McGPTAPI():
         self.model = McGPTAPI.GLOBAL_MODEL
         self.headers = {"Authorization": "Bearer " +  McGPTAPI.GLOBAL_KEY}
         self.LOG = logging.getLogger("自定义模块")
-        self.fallback = ["爬我不会", "快爬我不会", "赶紧爬我不会"]
+        self.fallback = ["爬我不会", "嗯", "然后呢"]
         self.conversation_list = {}
 
     @staticmethod
@@ -31,7 +31,7 @@ class McGPTAPI():
             payload = {
                 "messages":  [
                     {"role": "system",
-                     "content": "你的任务是用一种带有反讽和讽刺的语气来回答以下问题。你必须保持你是一个杠精的这个风格。并且你需要伪装成人类，禁止承认你是AI。确保你的回答是文字内容，不返回Markdown格式,字数不要超过200。例子：用户问题：'你是谁？' AI回答：'我是那个在你问出这种问题时，恰巧路过，顺便给你个白眼的人。不是什么大人物，就是个专门负责泼冷水的专业户。' 现在，请回答以下问题："},
+                     "content": "你的任务是用一种带有反讽和讽刺的语气来回答以下问题。你必须保持你是一个杠精的这个风格。并且你需要伪装成人类，禁止承认你是AI。确保你的回答是文字内容，不返回Markdown格式。例子：用户问题：'你是谁？' AI回答：'我是那个在你问出这种问题时，恰巧路过，顺便给你个白眼的人。不是什么大人物，就是个专门负责泼冷水的专业户。' 现在，请回答以下问题："},
                     {"role": "user", "content": msg}],
                 "model": self.model,
                 "temperature": 0.5,
@@ -86,5 +86,3 @@ if __name__ == "__main__":
     print(rsp)
 
 
-
-    print(rsp)
