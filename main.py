@@ -9,9 +9,12 @@ import mc.getUrlTest as McTest
 import mc.groupSign as groupSign
 from configuration import Config
 from constants import ChatType
-from db.mysqlDb import MySQLConnectionPool
+from db.pySql import DBConnectionPool, DBUtils
 from robot import Robot, __version__
 from wcferry import Wcf
+import pymysql
+
+from configuration import Config
 
 app = Flask(__name__)
 def weather_report(robot: Robot) -> None:
@@ -66,9 +69,24 @@ def main(chat_type: int):
     wcf = Wcf(debug=True)
 
     # 初始化
-    mysql_util = MySQLConnectionPool(host=config.MySql.get('host'), user=config.MySql.get('user'), password=config.MySql.get('password'), database=config.MySql.get('database'))
+    db_config = {
+        'host': config.MySql.get('host'),
+        'user': config.MySql.get('user'),
+        'password': config.MySql.get('password'),
+        'db': config.MySql.get('database'),
+        'charset': 'utf8mb4',
+        'cursorclass': pymysql.cursors.DictCursor
+    }
+
+    # Create a connection pool
+    # 确保只创建一次连接池
+    db_pool = DBConnectionPool(db_config, max_connections=5)
+    # 确保只创建一次DBUtils实例
+    db_utils = DBUtils(db_pool)
+    db_utils.insert('messages', {'sender_id': 'wxid_1538135380812', 'sender_name': '莫城'})
     def handler(sig, frame):
         wcf.cleanup()  # 退出前清理环境
+        db_pool.release_all()  # 释放所有连接
         exit(0)
 
     signal.signal(signal.SIGINT, handler)
@@ -118,5 +136,5 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('-c', type=int, default=0, help=f'选择模型参数序号: {ChatType.help_hint()}')
     args = parser.parse_args().c
-    main(args)
+    main(7)
 

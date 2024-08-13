@@ -26,10 +26,12 @@ from base.func_xinghuo_web import XinghuoWeb
 from configuration import Config
 from constants import ChatType
 from job_mgmt import Job
+import pymysql
 
 __version__ = "39.0.10.1"
 
 from mc import groupSign
+from db.pySql import DBUtils, DBConnectionPool
 
 
 class Robot(Job):
@@ -42,6 +44,19 @@ class Robot(Job):
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
+        db_config = {
+            'host': config.MySql.get('host'),
+            'user': config.MySql.get('user'),
+            'password': config.MySql.get('password'),
+            'db': config.MySql.get('database'),
+            'charset': 'utf8mb4',
+            'cursorclass': pymysql.cursors.DictCursor
+        }
+
+        # Create a connection pool
+        # 确保只创建一次连接池
+        db_pool = DBConnectionPool(db_config, max_connections=5)
+        self.dbUtils = DBUtils(db_pool)
 
         if ChatType.is_in_chat_types(chat_type):
             if chat_type == ChatType.TIGER_BOT.value and TigerBot.value_check(self.config.TIGERBOT):
@@ -152,6 +167,11 @@ class Robot(Job):
         content = msg.content
         # 群聊消息
         if msg.from_group():
+            # 保存群聊消息
+            self.dbUtils.insert('messages',
+                                {'room_id': msg.roomid, 'sender_id': msg.sender, 'chat_id': msg.id, 'message': content,
+                                 'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+
             # 如果在群里被 @
             if msg.roomid not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
                 return
@@ -164,20 +184,21 @@ class Robot(Job):
                     self.sendImage(doImage.get_image_path(content), msg.roomid)
                 if "#壁纸" in content:
                     if content == "#壁纸":
-                        self.sendTextMsg("请输入壁纸关键字:"+McTest.get_type_enum(), msg.roomid)
+                        self.sendTextMsg("请输入壁纸关键字:" + McTest.get_type_enum(), msg.roomid)
                         return
                     self.sendImage(McTest.test_send_image(content), msg.roomid)
                 if "#签到规则" in content:
-                    self.sendTextMsg("签到规则为:发送 #签到 即可签到,2点前算作昨天 ; 发送 #补签昨天 即可补签前一日", msg.roomid)
+                    self.sendTextMsg("签到规则为:发送 #签到 即可签到,2点前算作昨天 ; 发送 #补签昨天 即可补签前一日",
+                                     msg.roomid)
                 if "#签到" in content:
                     groupSign.insert(msg.roomid, msg.sender, "已签到")
                     self.sendTextMsg("签到成功",
                                      msg.roomid, msg.sender)
                 if "#补签" in content:
                     if "昨天" in content or "前天" in content:
-                        groupSign.insertBQ(msg.roomid, msg.sender, "已签到",content)
+                        groupSign.insertBQ(msg.roomid, msg.sender, "已签到", content)
                         self.sendTextMsg("补签成功",
-                                 msg.roomid, msg.sender)
+                                         msg.roomid, msg.sender)
                     else:
                         self.sendTextMsg("暂不支持其他天补签", msg.roomid)
                 if content == "#学习一个知识点":
@@ -197,6 +218,7 @@ class Robot(Job):
             self.sayHiToNewFriend(msg)
 
         elif msg.type == 0x01:  # 文本消息
+
             # 让配置加载更灵活，自己可以更新配置。也可以利用定时任务更新。
             if msg.from_self():
                 if msg.content == "^更新$":
@@ -277,7 +299,7 @@ class Robot(Job):
         :param msg:
         """
         # 获取所有群成员及名称
-        return  self.wcf.get_chatroom_members(roomid)
+        return self.wcf.get_chatroom_members(roomid)
 
     def getRoomDataInfo(self, roomid: str) -> dict:
         """ 发送消息
@@ -285,6 +307,7 @@ class Robot(Job):
         """
         # 获取所有群成员及名称
         return self.wcf.get_chatroom_data(roomid)
+
     def getAllContacts(self) -> dict:
         """
         获取联系人（包括好友、公众号、服务号、群成员……）
