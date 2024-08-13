@@ -278,6 +278,13 @@ class Robot(Job):
         """
         # 获取所有群成员及名称
         return  self.wcf.get_chatroom_members(roomid)
+
+    def getRoomDataInfo(self, roomid: str) -> dict:
+        """ 发送消息
+        :param msg:
+        """
+        # 获取所有群成员及名称
+        return self.wcf.get_chatroom_data(roomid)
     def getAllContacts(self) -> dict:
         """
         获取联系人（包括好友、公众号、服务号、群成员……）

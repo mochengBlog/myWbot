@@ -7,12 +7,9 @@ from argparse import ArgumentParser
 import sqlite3
 import mc.getUrlTest as McTest
 import mc.groupSign as groupSign
-from threading import Thread, Event
-
-from base.func_report_reminder import ReportReminder
 from configuration import Config
 from constants import ChatType
-
+from db.mysqlDb import MySQLConnectionPool
 from robot import Robot, __version__
 from wcferry import Wcf
 
@@ -63,10 +60,13 @@ def send_message_to_robot():
     return "OK"
 
 def main(chat_type: int):
+
     global robot, wcf  # 确保这些变量是全局的，以便在线程中访问
     config = Config()
     wcf = Wcf(debug=True)
 
+    # 初始化
+    mysql_util = MySQLConnectionPool(host=config.MySql.get('host'), user=config.MySql.get('user'), password=config.MySql.get('password'), database=config.MySql.get('database'))
     def handler(sig, frame):
         wcf.cleanup()  # 退出前清理环境
         exit(0)

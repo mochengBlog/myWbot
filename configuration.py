@@ -37,3 +37,4 @@ class Config(object):
         self.CHATGLM = yconfig.get("chatglm", {})
         self.BardAssistant = yconfig.get("bard", {})
         self.ZhiPu = yconfig.get("zhipu", {})
+        self.MySql = yconfig.get("mysql", {})
