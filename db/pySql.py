@@ -132,7 +132,11 @@ if __name__ == "__main__":
 
     # 确保只创建一次DBUtils实例
     db_utils = DBUtils(db_pool)
-    db_utils.insert_by_robot('messages', {'sender_id': 'wxid_1538135380812', 'sender_name': '莫城'})
-
+    db_utils.execute_query("truncate table room_info")
+    receivers = db_utils.execute_query("select room_id from messages group by room_id ");
+    for r in receivers:
+        # 获取字典r的值
+        r = r['room_id']
+        print(r)
 
 

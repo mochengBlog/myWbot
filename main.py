@@ -60,11 +60,26 @@ def reminderSignInfo(robot: Robot) -> None:
 def send_message_to_robot():
     robot.LOG.info(f"执行测试...")
     robot.sendTextMsg("Hello from Flask!", "filehelper")
+
     return "OK"
+
+
+def init_group_info_mysql(robot : Robot, db_utils : DBUtils) -> None:
+    db_utils.execute_query("truncate table room_info")
+    receivers = db_utils.execute_query("select room_id from messages group by room_id ");
+    for r in receivers:
+        # 获取字典r的值
+        r = r['room_id']
+        group_info = robot.getRoomInfo(r)
+        # 初始化群聊 {'wxid_1538135380812': '莫城', 'wxid_ej6qv9p6r6bg22': '乌苏里江畔', 'wxid_ytllv9po50bj12': 'CikL.'}
+        for wxid, name in group_info.items():
+            #查询该room_id 下的wxid是否存，若存在 判断name是否相等
+            db_utils.insert("room_info", {"room_id": r, "wxid": wxid, "name": name})
+
 
 def main(chat_type: int):
 
-    global robot, wcf  # 确保这些变量是全局的，以便在线程中访问
+    global robot, wcf ,db_utils # 确保这些变量是全局的，以便在线程中访问
     config = Config()
     wcf = Wcf(debug=True)
 
@@ -83,7 +98,6 @@ def main(chat_type: int):
     db_pool = DBConnectionPool(db_config, max_connections=5)
     # 确保只创建一次DBUtils实例
     db_utils = DBUtils(db_pool)
-    db_utils.insert('messages', {'sender_id': 'wxid_1538135380812', 'sender_name': '莫城'})
     def handler(sig, frame):
         wcf.cleanup()  # 退出前清理环境
         db_pool.release_all()  # 释放所有连接
@@ -96,6 +110,8 @@ def main(chat_type: int):
     robot.LOG.info(f"WeChatRobot【{__version__}】成功启动···")
     # 初始化群聊
     init_group_info(robot)
+    # 用于mysql
+    #init_group_info_mysql(robot,db_utils)
 
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
@@ -108,6 +124,7 @@ def main(chat_type: int):
     robot.onEveryTime("08:00", weather_report, robot=robot)
     # 每天 7 点初始化群聊
     robot.onEveryTime("07:00", init_group_info, robot=robot)
+    robot.onEveryTime("07:10", init_group_info_mysql, robot=robot)
 
     # 每天 8:30 发送新闻
      # robot.onEveryTime("08:30", robot.newsReport)

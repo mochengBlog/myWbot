@@ -167,10 +167,15 @@ class Robot(Job):
         content = msg.content
         # 群聊消息
         if msg.from_group():
-            # 保存群聊消息
-            self.dbUtils.insert('messages',
-                                {'room_id': msg.roomid, 'sender_id': msg.sender, 'chat_id': msg.id, 'message': content,
-                                 'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+            if msg.type == 1: # 如果是文本
+                # 保存群聊消息
+                self.dbUtils.insert('messages',
+                                    {'room_id': msg.roomid, 'sender_id': msg.sender, 'chat_id': msg.id, 'message': content,'message_type': 1,
+                                     'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+            #if msg.type == 3:   # 如果是图片把图片上传到图床
+
+
+
 
             # 如果在群里被 @
             if msg.roomid not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
