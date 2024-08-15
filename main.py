@@ -124,7 +124,7 @@ def main(chat_type: int):
     robot.onEveryTime("08:00", weather_report, robot=robot)
     # 每天 7 点初始化群聊
     robot.onEveryTime("07:00", init_group_info, robot=robot)
-    robot.onEveryTime("07:10", init_group_info_mysql, robot=robot)
+    # robot.onEveryTime("07:10", init_group_info_mysql, robot=robot)
 
     # 每天 8:30 发送新闻
      # robot.onEveryTime("08:30", robot.newsReport)
