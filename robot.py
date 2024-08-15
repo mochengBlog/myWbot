@@ -172,6 +172,9 @@ class Robot(Job):
                 self.dbUtils.insert('messages',
                                     {'room_id': msg.roomid, 'sender_id': msg.sender, 'chat_id': msg.id, 'message': content,'message_type': 1,
                                      'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+
+            # if msg.type == 49:  # 带有引用的文本消息（这种类型下 StrContent 为空，发送和引用的内容均在 CompressContent 中）
+            # if msg.type == 49:  # 合并转发的聊天记录，CompressContent 中有详细聊天记录，BytesExtra 中有图片视频等的缓存
             #if msg.type == 3:   # 如果是图片把图片上传到图床
 
 

@@ -69,7 +69,6 @@ class DBUtils(metaclass=SingletonMeta):  # 注意这里应用了元类
         connection = self.db_pool.get_connection()
         if connection is None:
             raise Exception("No available database connections.")
-
         try:
             with connection.cursor() as cursor:
                 cursor.execute(query, params or ())
@@ -107,6 +106,10 @@ class DBUtils(metaclass=SingletonMeta):  # 注意这里应用了元类
     def insert_by_robot(self, table: str, data : dict):
         db = DBUtils(db_pool)
         db.insert(table, data)
+    def getMessageInfoByCount(self,room_id: str, count: int):
+        db = DBUtils(self.db_pool)
+        return db.execute_query(f"SELECT sender_id,(SELECT NAME FROM room_info WHERE wxid=sender_id AND room_id='{room_id}') AS name,message FROM messages WHERE room_id='{room_id}' AND message_type=1 ORDER BY date  LIMIT {count} ")
+
 
 
 
@@ -132,11 +135,16 @@ if __name__ == "__main__":
 
     # 确保只创建一次DBUtils实例
     db_utils = DBUtils(db_pool)
-    db_utils.execute_query("truncate table room_info")
-    receivers = db_utils.execute_query("select room_id from messages group by room_id ");
-    for r in receivers:
-        # 获取字典r的值
-        r = r['room_id']
-        print(r)
+    # 根据条件 查询聊天记录  1 时间倒序查询100条 2 根据时间日期查询
+    rows = db_utils.getMessageInfoByCount("24236590105@chatroom", 100)
 
-
+    messages = []
+    if not rows:
+        print("No rows found.")
+    else:
+        for row in rows:
+            sender_id = row['sender_id']
+            sender_name = row['name']
+            message = row['message']
+            messages.append(f"{sender_name}说:{message}")
+    print(messages)
