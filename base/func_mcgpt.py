@@ -32,7 +32,7 @@ class McGPTAPI():
 
     def get_answer(self, msg: str, wxid: str, **args) -> str:
         # self.updateMessage(wxid, str(msg), "user")
-        PROMPT_FILE_PATH = './lw_prompt.txt'
+        PROMPT_FILE_PATH = './prompt_daiyu.txt'
         try:
             PROMPT = load_prompt_from_file(PROMPT_FILE_PATH)
         except Exception as e:
