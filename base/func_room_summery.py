@@ -36,7 +36,7 @@ class McGPTAPI():
     def get_answer(self, msg: str, **args) -> str:
         # self.updateMessage(wxid, str(msg), "user")
         # 从文件中加载预设的prompt
-        PROMPT_FILE_PATH = 'prompt.txt'
+        PROMPT_FILE_PATH = 'lw_prompt.txt'
         try:
             PROMPT = load_prompt_from_file(PROMPT_FILE_PATH)
         except Exception as e:
