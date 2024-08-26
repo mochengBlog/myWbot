@@ -32,6 +32,7 @@ __version__ = "39.0.10.1"
 
 from mc import groupSign
 from db.pySql import DBUtils, DBConnectionPool
+from mc.dida365_api import sendDIDA365Email
 
 
 class Robot(Job):
@@ -187,6 +188,12 @@ class Robot(Job):
                 self.toAt(msg)
 
             else:  # 其他消息
+                #  添加到滴答清单
+                if "#todo" in content:
+                    content = content.replace("#todo", "")
+                    # 添加到滴答清单 content  用 ｜分割主题和info
+                    info = content.split("｜")
+                    sendDIDA365Email(info[0], info[1], self.config.MySql.get('mail_pass'));
                 if "#画画" in content:
                     content = content.replace("#画画", "")
                     self.sendImage(doImage.get_image_path(content), msg.roomid)
