@@ -51,7 +51,8 @@ class IChing:
         logger.debug(f"卦名二进制表示: {result}")
         return result
 
-    def giet_guaming_info(self):
+    @classmethod
+    def giet_guaming_info(cls):
         iching = IChing()
         ben_gua, bian_gua, bian_gua_position = iching.get_hexagram()
         bengua_guaming = iching.get_guaming(ben_gua)
@@ -66,27 +67,31 @@ class IChing:
         # 从IChingData.json中获取 详情
         return IChingData[bengua_guaming], IChingData[biangua_guaming]
 
-
 # 示例使用
+
+
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    iching = IChing()
-    ben_gua, bian_gua, bian_gua_position = iching.get_hexagram()
-    bengua_guaming = iching.get_guaming(ben_gua)
-    biangua_guaming = iching.get_guaming(bian_gua)
-    logger.info(f"本卦名: {bengua_guaming}")
-    logger.info(f"变卦名: {biangua_guaming}")
-    # 指定 JSON 文件的路径
-    file_path = './IChingData.json'
-    # 读取 JSON 文件
-    with open(file_path, 'r', encoding='utf-8') as json_file:
-        IChingData = json.load(json_file)
-    #从IChingData.json中获取 详情
-    print(IChingData[bengua_guaming])
-    print(IChingData[biangua_guaming])
-    # 格式化并输出
-    formatted_output = f"变卦：{IChingData[biangua_guaming]['name']}\n卦辞：{IChingData[biangua_guaming]['text']}"
-    print(formatted_output)
+    bengua , biangua = IChing.giet_guaming_info()
+    print(bengua)
+    print(biangua)
+    # logging.basicConfig(level=logging.DEBUG)
+    # iching = IChing()
+    # ben_gua, bian_gua, bian_gua_position = iching.get_hexagram()
+    # bengua_guaming = iching.get_guaming(ben_gua)
+    # biangua_guaming = iching.get_guaming(bian_gua)
+    # logger.info(f"本卦名: {bengua_guaming}")
+    # logger.info(f"变卦名: {biangua_guaming}")
+    # # 指定 JSON 文件的路径
+    # file_path = './IChingData.json'
+    # # 读取 JSON 文件
+    # with open(file_path, 'r', encoding='utf-8') as json_file:
+    #     IChingData = json.load(json_file)
+    # #从IChingData.json中获取 详情
+    # print(IChingData[bengua_guaming])
+    # print(IChingData[biangua_guaming])
+    # # 格式化并输出
+    # formatted_output = f"变卦：{IChingData[biangua_guaming]['name']}\n卦辞：{IChingData[biangua_guaming]['text']}"
+    # print(formatted_output)
 
 
 
