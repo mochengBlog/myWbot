@@ -3,6 +3,8 @@ import time
 import logging
 import json
 
+from base import func_mcgpt
+
 logger = logging.getLogger(__name__)
 
 class IChing:
@@ -71,9 +73,17 @@ class IChing:
 
 
 if __name__ == "__main__":
-    bengua , biangua = IChing.giet_guaming_info()
+
+    bengua_info, biangua_info = IChing.giet_guaming_info()
+    bengua = f"本卦：{bengua_info['name']}\n卦辞：{bengua_info['text']}\n卦象：{bengua_info['interpretation']}"
+    biangua = f"变卦：{biangua_info['name']}\n卦辞：{biangua_info['text']}\n卦象：{biangua_info['interpretation']}"
+
     print(bengua)
     print(biangua)
+    xx = func_mcgpt.McGPTAPI()
+    rsp = xx.get_answer_by_rompt(bengua + biangua, "我今天能发财吗", 'iching.txt')
+    print(rsp)
+
     # logging.basicConfig(level=logging.DEBUG)
     # iching = IChing()
     # ben_gua, bian_gua, bian_gua_position = iching.get_hexagram()

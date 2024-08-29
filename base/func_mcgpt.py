@@ -70,7 +70,7 @@ class McGPTAPI():
             PROMPT = load_prompt_from_file(PROMPT_FILE_PATH)
         except Exception as e:
             logging.error(f"Failed to load prompt from file: {e}")
-            PROMPT = "解读以下卦象,并回答问题：\n"  # 如果加载失败，使用默认值
+            PROMPT = "解读以下卦象,并回答问题回答不要超过100字：\n"  # 如果加载失败，使用默认值
         rsp = ""
         try:
             payload = {
