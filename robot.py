@@ -33,6 +33,7 @@ __version__ = "39.0.10.1"
 from mc import groupSign
 from db.pySql import DBUtils, DBConnectionPool
 from mc.dida365_api import sendDIDA365Email
+from mc.Iching import IChing
 
 
 class Robot(Job):
@@ -188,6 +189,28 @@ class Robot(Job):
                 self.toAt(msg)
 
             else:  # 其他消息
+                if "#占卜" in content:
+                    content = content.replace("#占卜", "")
+                    if not content.strip():
+                        # 请输入占卜内容
+                        print("字符串为空或仅包含空格")
+                        self.sendTextMsg("请输入占卜问题(例如：#占卜 今天我能发财吗?)", msg.roomid)
+                    else:
+                        #开始算卦
+                        self.sendTextMsg("正在进行<蓍草占卜>", msg.roomid)
+                        bengua_info, biangua_info = IChing.giet_guaming_info()
+                        bengua = f"本卦：{bengua_info['name']}\n卦辞：{bengua_info['text']}\n卦象：{bengua_info['interpretation']}"
+                        biangua = f"变卦：{biangua_info['name']}\n卦辞：{biangua_info['text']}\n卦象：{biangua_info['interpretation']}"
+                        self.sendTextMsg(bengua, msg.roomid)
+                        self.sendTextMsg(biangua, msg.roomid)
+                        self.sendTextMsg("大师解读正在解读.....", msg.roomid)
+                        rsp = self.chat.get_answer_by_rompt(bengua+biangua,content,'iching.txt')
+                        if rsp:
+                            if msg.from_group():
+                                self.sendTextMsg(rsp, msg.roomid, msg.sender)
+                            else:
+                                self.sendTextMsg(rsp, msg.sender)
+
                 #  添加到滴答清单
                 if "#todo" in content:
                     content = content.replace("#todo", "")

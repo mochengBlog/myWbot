@@ -62,6 +62,38 @@ class McGPTAPI():
             rsp = self.fallback[idx]
         return rsp
 
+
+    def get_answer_by_rompt(self, msg: str,question: str, prompt: str) -> str:
+        # self.updateMessage(wxid, str(msg), "user")
+        PROMPT_FILE_PATH = './'+prompt
+        try:
+            PROMPT = load_prompt_from_file(PROMPT_FILE_PATH)
+        except Exception as e:
+            logging.error(f"Failed to load prompt from file: {e}")
+            PROMPT = "解读以下卦象,并回答问题：\n"  # 如果加载失败，使用默认值
+        rsp = ""
+        try:
+            payload = {
+                "messages": [
+                    {"role": "user", "content": f"{PROMPT,question, msg}"}],
+                "model": self.model,
+                "temperature": 0.5,
+                "stream": False,
+            }
+            self.LOG.error(f"debug-payload: {payload}")
+            rsp = requests.post(self.url, headers=self.headers, json=payload).json()
+
+            rsp = rsp["choices"][0]["message"]["content"].strip()
+            rsp = rsp[2:] if rsp.startswith("\n\n") else rsp
+            rsp = rsp.replace("\n\n", "\n")
+            self.LOG.error(f"debug-rsp: {rsp}")
+            # self.updateMessage(wxid, rsp, "assistant")
+        except Exception as e:
+            print(e)
+            self.LOG.error(f"{e}: {rsp}")
+            idx = randint(0, len(self.fallback) - 1)
+            rsp = self.fallback[idx]
+        return rsp
     def updateMessage(self, wxid: str, question: str, role: str) -> None:
         now_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         # 初始化聊天记录,组装系统信息
