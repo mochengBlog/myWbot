@@ -73,7 +73,6 @@ def get_image_path_by_mj(prompt: str):
         data = response.json()
         print(data)
         # 处理数据
-
         return response
     except Exception as e:
         print(f"处理图片时发生错误: {e}")
