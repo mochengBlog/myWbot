@@ -59,12 +59,12 @@ def get_mj_info(robot: Robot) -> None:
             robot.LOG.info(data)
             # 处理数据
             if data['status'] == 'IN_PROGRESS':
-                robot.sendMsg("任务进度：" + str(data['progress']), row['room_id'], row['sender_id'])
+                robot.sendTextMsg("任务进度：" + str(data['progress']), row['room_id'], row['sender_id'])
             elif data['status'] == 'FAILURE':
-                robot.sendMsg("任务失败", row['room_id'], row['sender_id'])
+                robot.sendTextMsg("任务失败", row['room_id'], row['sender_id'])
             elif data['status'] == 'SUCCESS':
                 robot.dbUtils.update('mj_info', {'mj_url': data['imageUrl']}, 'task_id = ' + str(task_id))
-                robot.sendMsg("任务成功，图像地址：" + data['imageUrl'] + "", row['room_id'], row['sender_id'])
+                robot.sendTextMsg("任务成功，图像地址：" + data['imageUrl'] + "", row['room_id'], row['sender_id'])
             else:
                 robot.LOG.info("操作失败，错误代码:", data['code'])
 
