@@ -49,7 +49,8 @@ def init_group_info(robot: Robot) -> None:
 def get_mj_info(robot: Robot) -> None:
     rows = robot.dbUtils.execute_query("select * from mj_info where mj_url is null")
     if not rows:
-        print("No rows found.")
+        pass
+        # print("No rows found.")
     else:
         for row in rows:
             task_id = row['task_id']
@@ -152,7 +153,7 @@ def main(chat_type: int):
     # 每天 7 点初始化群聊
     robot.onEveryTime("07:00", init_group_info, robot=robot)
 
-    robot.onEverySeconds(40, get_mj_info, robot=robot)
+    robot.onEverySeconds(20, get_mj_info, robot=robot)
     # robot.onEveryTime("07:10", init_group_info_mysql(robot,db_utils), robot=robot)
 
     # 每天 8:30 发送新闻

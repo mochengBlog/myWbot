@@ -95,17 +95,10 @@ def get_task_process(taskId: str) -> str:
 
 
 if __name__ == '__main__':
-    # url = get_image_path_by_mj(" Plush toy design, cute plush animal toys, Nordic design, minimalist design, Disney style, product design, plush, cute, creative, practical, simple, natural plush, soft and delicate, extremely rich hidden details of plush texture, white background, Blender software tool, 8K, high definition, ultimate detail, high detail, HD, high quality, masterpiece, masterwork, ultra-high definition, high precision, full of vitality, heart-healing, dreamy plush texture, anime style. --ar 9:16 --stylize 1000")
-    result = get_image_path_by_mj(" Plush toy design, cute plush animal toys, Nordic design, minimalist design, Disney style, product design, plush, cute, creative, practical, simple, natural plush, soft and delicate, extremely rich hidden details of plush texture, white background, Blender software tool, 8K, high definition, ultimate detail, high detail, HD, high quality, masterpiece, masterwork, ultra-high definition, high precision, full of vitality, heart-healing, dreamy plush texture, anime style. --ar 9:16 --stylize 1000").json()
-    if "error" in result:
-        print(result)
 
-    if result['code'] == 1:
-        print(result)
 
-    elif result['code'] == 22:
-        print(result)
-
+    url = save_image_by_url("https://img.innk.cc/attachments/1284058188978585674/1284163556786311280/jiisd._2_cats_sleeping_one_cat_is_white_the_other_one_is_black._9026432c-c22f-44b0-96e9-58adb2386a97.png?ex=66e5a202&is=66e45082&hm=b503537c24fc53260f8afdf63bf814f47604cd72944b99da187df74009740d5b&")
+    print(url)
 
     # url = get_task_process('1726219522652629')
     # print(url)
