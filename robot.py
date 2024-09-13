@@ -227,20 +227,20 @@ class Robot(Job):
                     if "error" in result:
                         self.sendTextMsg("充点钱啊 死鬼", msg.roomid, msg.sender)
                     if result['code'] == 1:
-                        self.sendTextMsg("提交成功,请等待(40-120s)", msg.roomid, msg.sender)
+                        self.sendTextMsg("提交成功,请等待(40-120s),taskId为" + result['result'] + "", msg.roomid, msg.sender)
                         # 数据存储在sqllite中
                         self.dbUtils.insert('mj_info',
                                        {'room_id': msg.roomid,
-                                        'task_id': result['taskId'],
+                                        'task_id': result['result'],
                                         'sender_id': msg.sender,
                                         'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
                     elif result['code'] == 22:
                         self.dbUtils.insert('mj_info',
                                             {'room_id': msg.roomid,
-                                             'taskId': result['taskId'],
+                                             'task_id': result['result'],
                                              'sender_id': msg.sender,
                                              'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
-                        self.sendTextMsg(result['taskId']+"排队中，请等待", msg.roomid,msg.sender)
+                        self.sendTextMsg(result['result']+"排队中，请等待", msg.roomid,msg.sender)
 
                 if "#壁纸" in content:
                     if content == "#壁纸":
