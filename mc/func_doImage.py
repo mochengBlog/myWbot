@@ -95,9 +95,19 @@ def get_task_process(taskId: str) -> str:
 
 if __name__ == '__main__':
     # url = get_image_path_by_mj(" Plush toy design, cute plush animal toys, Nordic design, minimalist design, Disney style, product design, plush, cute, creative, practical, simple, natural plush, soft and delicate, extremely rich hidden details of plush texture, white background, Blender software tool, 8K, high definition, ultimate detail, high detail, HD, high quality, masterpiece, masterwork, ultra-high definition, high precision, full of vitality, heart-healing, dreamy plush texture, anime style. --ar 9:16 --stylize 1000")
+    result = get_image_path_by_mj(" Plush toy design, cute plush animal toys, Nordic design, minimalist design, Disney style, product design, plush, cute, creative, practical, simple, natural plush, soft and delicate, extremely rich hidden details of plush texture, white background, Blender software tool, 8K, high definition, ultimate detail, high detail, HD, high quality, masterpiece, masterwork, ultra-high definition, high precision, full of vitality, heart-healing, dreamy plush texture, anime style. --ar 9:16 --stylize 1000").json()
+    if "error" in result:
+        print(result)
 
-    url = get_task_process('1726219522652629')
-    print(url)
+    if result['code'] == 1:
+        print(result)
+
+    elif result['code'] == 22:
+        print(result)
+
+
+    # url = get_task_process('1726219522652629')
+    # print(url)
     # response = requests.get("https://fal.media/files/lion/dvMGO_x0jqo7DrNjpM7Ui.png")
     # response.raise_for_status()
     # with open("save_path", "wb") as f:
