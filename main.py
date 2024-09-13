@@ -10,7 +10,7 @@ import mc.groupSign as groupSign
 from configuration import Config
 from constants import ChatType
 from db.pySql import DBConnectionPool, DBUtils
-from mc.func_doImage import get_task_process
+from mc.func_doImage import get_task_process, save_image_by_url
 from robot import Robot, __version__
 from wcferry import Wcf
 import pymysql
@@ -64,7 +64,8 @@ def get_mj_info(robot: Robot) -> None:
                 robot.sendTextMsg("任务失败", row['room_id'], row['sender_id'])
             elif data['status'] == 'SUCCESS':
                 robot.dbUtils.update('mj_info', {'mj_url': data['imageUrl']}, 'task_id = ' + str(task_id))
-                robot.sendTextMsg("任务成功，图像地址：" + data['imageUrl'] + "", row['room_id'], row['sender_id'])
+                robot.sendTextMsg("任务成功，图像地址：" + data['imageUrl'], row['room_id'], row['sender_id'])
+                robot.sendImage(save_image_by_url(data['imageUrl']), row['room_id'])
             else:
                 robot.LOG.info("操作失败，错误代码:", data['code'])
 

@@ -29,32 +29,33 @@ def get_image_path(prompt: str) -> str:
     try:
         getUrl = get_response(prompt)
 
-        # 生成文件名
-        timestamp = str(int(time.time()))
-        random_num = str(random.randint(10000, 99999))
-        file_name = f"{timestamp}_{random_num}.png"
-
-        # 设置保存图片的路径
-        user_desktop = os.path.join(os.path.expanduser("~"), "Desktop", "temp")
-        save_path = os.path.join(user_desktop, file_name)
-
-        # 确保 temp 文件夹存在
-        if not os.path.exists(user_desktop):
-            os.makedirs(user_desktop)
-
-        # 下载并保存图片
-        try:
-            response = requests.get(getUrl)
-            response.raise_for_status()
-            with open(save_path, "wb") as f:
-                f.write(response.content)
-            print(f"图片已下载到: {save_path}")
-        except Exception as e:
-            print(f"下载图片时发生错误: {e}")
-        return save_path
+        return save_image_by_url(getUrl)
 
     except Exception as e:
         print(f"处理图片时发生错误: {e}")
+
+
+def save_image_by_url(getUrl):
+    # 生成文件名
+    timestamp = str(int(time.time()))
+    random_num = str(random.randint(10000, 99999))
+    file_name = f"{timestamp}_{random_num}.png"
+    # 设置保存图片的路径
+    user_desktop = os.path.join(os.path.expanduser("~"), "Desktop", "temp")
+    save_path = os.path.join(user_desktop, file_name)
+    # 确保 temp 文件夹存在
+    if not os.path.exists(user_desktop):
+        os.makedirs(user_desktop)
+    # 下载并保存图片
+    try:
+        response = requests.get(getUrl)
+        response.raise_for_status()
+        with open(save_path, "wb") as f:
+            f.write(response.content)
+        print(f"图片已下载到: {save_path}")
+    except Exception as e:
+        print(f"下载图片时发生错误: {e}")
+    return save_path
 
 
 def get_image_path_by_mj(prompt: str):
