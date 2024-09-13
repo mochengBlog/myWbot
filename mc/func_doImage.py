@@ -69,9 +69,6 @@ def get_image_path_by_mj(prompt: str):
             'Content-Type': 'application/json'
         }
         response = requests.request("POST", url, headers=headers, data=payload)
-        # 解析 JSON 数据
-        data = response.json()
-        print(data)
         # 处理数据
         return response
     except Exception as e:
