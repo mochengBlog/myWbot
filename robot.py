@@ -222,7 +222,7 @@ class Robot(Job):
                     self.sendImage(doImage.get_image_path(content), msg.roomid)
                 if "#mj" in content:
                     content = content.replace("#mj", "")
-                    result = doImage.get_image_path_by_mj(content, msg.roomid)
+                    result = doImage.get_image_path_by_mj(content)
                     if result['code'] == 1:
                         self.sendTextMsg(result + ",请等待(40-120s)", msg.roomid, msg.sender)
                         # 数据存储在sqllite中
