@@ -10,6 +10,7 @@ import mc.groupSign as groupSign
 from configuration import Config
 from constants import ChatType
 from db.pySql import DBConnectionPool, DBUtils
+from mc.func_doImage import get_task_process
 from robot import Robot, __version__
 from wcferry import Wcf
 import pymysql
@@ -43,6 +44,31 @@ def init_group_info(robot: Robot) -> None:
             groupSign.init_group_info(r, wxid, name)
 
     robot.LOG.info(f"初始化群聊成功")
+
+
+def get_mj_info(robot: Robot) -> None:
+    rows = robot.dbUtils.execute_query("select * from mj_info where mj_url is null")
+    if not rows:
+        print("No rows found.")
+    else:
+        for row in rows:
+            task_id = row['task_id']
+            #去查询接口看是否生成
+            response = get_task_process(task_id)
+            data = response.json()
+            robot.LOG.info(data)
+            # 处理数据
+            if data['status'] == 'IN_PROGRESS':
+                robot.sendMsg("任务进度：" + str(data['progress']), row['room_id'], row['sender_id'])
+            elif data['status'] == 'FAILURE':
+                robot.sendMsg("任务失败", row['room_id'], row['sender_id'])
+            elif data['status'] == 'SUCCESS':
+                robot.dbUtils.update('mj_info', {'mj_url': data['imageUrl']}, 'task_id = ' + str(task_id))
+                robot.sendMsg("任务成功，图像地址：" + data['imageUrl'] + "", row['room_id'], row['sender_id'])
+            else:
+                robot.LOG.info("操作失败，错误代码:", data['code'])
+
+
 
 def reminderSignInfo(robot: Robot) -> None:
     receivers = robot.config.NEWS
@@ -124,6 +150,8 @@ def main(chat_type: int):
     robot.onEveryTime("08:00", weather_report, robot=robot)
     # 每天 7 点初始化群聊
     robot.onEveryTime("07:00", init_group_info, robot=robot)
+
+    robot.onEverySeconds(40, get_mj_info, robot=robot)
     # robot.onEveryTime("07:10", init_group_info_mysql(robot,db_utils), robot=robot)
 
     # 每天 8:30 发送新闻

@@ -3,10 +3,15 @@ import logging
 import requests
 from random import randint
 from datetime import datetime
+
+
+def load_prompt_from_file(filepath):
+    with open(filepath, 'r', encoding='utf-8') as file:
+        return file.read().strip()
 class McGPTAPI():
     GLOBAL_MODEL = "gpt-4o-mini"
-    GLOBAL_URL = "http://110.40.41.167:21531/v1/chat/completions"
-    GLOBAL_KEY = "sk-cBmokkQJRF25YZBp6c848a1a558649F7993fEb1083638e85"
+    GLOBAL_URL = "https://api.freegpt.art/v1/chat/completions"
+    GLOBAL_KEY = "sk-gbBE1mOPTTA6OdgU5a28De5cE6744b1d88C750C00397B7A1"
 
     def __init__(self) -> None:
         self.api_key = McGPTAPI.GLOBAL_KEY
@@ -14,7 +19,7 @@ class McGPTAPI():
         self.model = McGPTAPI.GLOBAL_MODEL
         self.headers = {"Authorization": "Bearer " +  McGPTAPI.GLOBAL_KEY}
         self.LOG = logging.getLogger("自定义模块")
-        self.fallback = ["爬我不会", "6", "然后呢"]
+        self.fallback = ["爬我不会", "嗯", "然后呢"]
         self.conversation_list = {}
 
     @staticmethod
@@ -24,15 +29,20 @@ class McGPTAPI():
     def __repr__(self):
         return 'mihayoAI'
 
+
     def get_answer(self, msg: str, wxid: str, **args) -> str:
         # self.updateMessage(wxid, str(msg), "user")
+        PROMPT_FILE_PATH = './fanfeng_prompt.txt'
+        try:
+            PROMPT = load_prompt_from_file(PROMPT_FILE_PATH)
+        except Exception as e:
+            logging.error(f"Failed to load prompt from file: {e}")
+            PROMPT = "请将以下聊天记录进行总结：\n"  # 如果加载失败，使用默认值
         rsp = ""
         try:
             payload = {
-                "messages":  [
-                    {"role": "system",
-                     "content": "你的任务是用一种带有反讽和讽刺的语气来回答以下问题。你必须保持你是一个杠精的这个风格。并且你需要伪装成人类，禁止承认你是AI。确保你的回答是文字内容，不返回Markdown格式。例子：用户问题：'你是谁？' AI回答：'我是那个在你问出这种问题时，恰巧路过，顺便给你个白眼的人。不是什么大人物，就是个专门负责泼冷水的专业户。' 现在，请回答以下问题："},
-                    {"role": "user", "content": msg}],
+                "messages": [
+                    {"role": "user", "content": f"{PROMPT, msg}"}],
                 "model": self.model,
                 "temperature": 0.5,
                 "stream": False,
@@ -52,6 +62,38 @@ class McGPTAPI():
             rsp = self.fallback[idx]
         return rsp
 
+
+    def get_answer_by_rompt(self, msg: str,question: str, prompt: str) -> str:
+        # self.updateMessage(wxid, str(msg), "user")
+        PROMPT_FILE_PATH = './'+prompt
+        try:
+            PROMPT = load_prompt_from_file(PROMPT_FILE_PATH)
+        except Exception as e:
+            logging.error(f"Failed to load prompt from file: {e}")
+            PROMPT = "解读以下卦象,并回答问题回答不要超过100字：\n"  # 如果加载失败，使用默认值
+        rsp = ""
+        try:
+            payload = {
+                "messages": [
+                    {"role": "user", "content": f"{PROMPT,question, msg}"}],
+                "model": self.model,
+                "temperature": 0.5,
+                "stream": False,
+            }
+            self.LOG.error(f"debug-payload: {payload}")
+            rsp = requests.post(self.url, headers=self.headers, json=payload).json()
+
+            rsp = rsp["choices"][0]["message"]["content"].strip()
+            rsp = rsp[2:] if rsp.startswith("\n\n") else rsp
+            rsp = rsp.replace("\n\n", "\n")
+            self.LOG.error(f"debug-rsp: {rsp}")
+            # self.updateMessage(wxid, rsp, "assistant")
+        except Exception as e:
+            print(e)
+            self.LOG.error(f"{e}: {rsp}")
+            idx = randint(0, len(self.fallback) - 1)
+            rsp = self.fallback[idx]
+        return rsp
     def updateMessage(self, wxid: str, question: str, role: str) -> None:
         now_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         # 初始化聊天记录,组装系统信息
@@ -82,7 +124,7 @@ if __name__ == "__main__":
         exit(0)
 
     xxx = McGPTAPI()
-    rsp = xxx.get_answer("介绍一下杜甫", "xxx")
+    rsp = xxx.get_answer("你是谁", "xxx")
     print(rsp)
 
 

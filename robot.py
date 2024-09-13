@@ -204,7 +204,7 @@ class Robot(Job):
                         self.sendTextMsg(bengua, msg.roomid)
                         self.sendTextMsg(biangua, msg.roomid)
                         self.sendTextMsg("大师解读正在解读.....", msg.roomid)
-                        rsp = self.chat.get_answer_by_rompt(bengua+biangua,content,'iching.txt')
+                        rsp = self.chat.get_answer_by_rompt(bengua + biangua, content, 'iching.txt')
                         if rsp:
                             if msg.from_group():
                                 self.sendTextMsg(rsp, msg.roomid, msg.sender)
@@ -220,6 +220,25 @@ class Robot(Job):
                 if "#画画" in content:
                     content = content.replace("#画画", "")
                     self.sendImage(doImage.get_image_path(content), msg.roomid)
+                if "#mj" in content:
+                    content = content.replace("#mj", "")
+                    result = doImage.get_image_path_by_mj(content, msg.roomid)
+                    if result['code'] == 1:
+                        self.sendTextMsg(result + ",请等待(40-120s)", msg.roomid, msg.sender)
+                        # 数据存储在sqllite中
+                        self.dbUtils.insert('mj_info',
+                                       {'room_id': msg.roomid,
+                                        'task_id': result['taskId'],
+                                        'sender_id': msg.sender,
+                                        'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+                    elif result['code'] == 22:
+                        self.dbUtils.insert('mj_info',
+                                            {'room_id': msg.roomid,
+                                             'taskId': result['taskId'],
+                                             'sender_id': msg.sender,
+                                             'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+                        self.sendTextMsg(result['taskId']+"排队中，请等待", msg.roomid,msg.sender)
+
                 if "#壁纸" in content:
                     if content == "#壁纸":
                         self.sendTextMsg("请输入壁纸关键字:" + McTest.get_type_enum(), msg.roomid)
