@@ -225,7 +225,7 @@ class Robot(Job):
                     content = content.replace("#mj", "")
                     result = doImage.get_image_path_by_mj(content).json()
                     if result['code'] == 1:
-                        self.sendTextMsg(result + ",请等待(40-120s)", msg.roomid, msg.sender)
+                        self.sendTextMsg("提交成功,请等待(40-120s)", msg.roomid, msg.sender)
                         # 数据存储在sqllite中
                         self.dbUtils.insert('mj_info',
                                        {'room_id': msg.roomid,
