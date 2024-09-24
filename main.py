@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 import threading
-from flask import Flask
+from flask import Flask, request
 import signal
 from argparse import ArgumentParser
 import sqlite3
@@ -18,6 +18,8 @@ import pymysql
 from configuration import Config
 
 app = Flask(__name__)
+
+
 def weather_report(robot: Robot) -> None:
     """模拟发送天气预报
     """
@@ -71,15 +73,12 @@ def get_mj_info(robot: Robot) -> None:
                 robot.LOG.info("操作失败，错误代码:", data['code'])
 
 
-
 def reminderSignInfo(robot: Robot) -> None:
     receivers = robot.config.NEWS
 
     for r in receivers:
         info = groupSign.reminderSignInfo(r)
         robot.sendTextMsg(McTest.get_weather_api(), r)
-
-
 
     robot.LOG.info(f"初始化群聊成功")
 
@@ -92,7 +91,15 @@ def send_message_to_robot():
     return "OK"
 
 
-def init_group_info_mysql(robot : Robot, db_utils : DBUtils) -> None:
+@app.route('/sentToWxId', methods=['POST'])
+def send_message_to_robot():
+    wxid = request.args.get('wxid')  # 从 URL 查询参数中获取 wxid
+    text = request.args.get('text')  # 从 URL 查询参数中获取 text
+    robot.sendTextMsg(text, wxid)  # 发送消息
+    return "OK", 200
+
+
+def init_group_info_mysql(robot: Robot, db_utils: DBUtils) -> None:
     db_utils.execute_query("truncate table room_info")
     receivers = db_utils.execute_query("select room_id from messages group by room_id ");
     for r in receivers:
@@ -106,8 +113,7 @@ def init_group_info_mysql(robot : Robot, db_utils : DBUtils) -> None:
 
 
 def main(chat_type: int):
-
-    global robot, wcf ,db_utils # 确保这些变量是全局的，以便在线程中访问
+    global robot, wcf, db_utils  # 确保这些变量是全局的，以便在线程中访问
     config = Config()
     wcf = Wcf(debug=True)
 
@@ -126,6 +132,7 @@ def main(chat_type: int):
     db_pool = DBConnectionPool(db_config, max_connections=5)
     # 确保只创建一次DBUtils实例
     db_utils = DBUtils(db_pool)
+
     def handler(sig, frame):
         wcf.cleanup()  # 退出前清理环境
         db_pool.release_all()  # 释放所有连接
@@ -144,7 +151,6 @@ def main(chat_type: int):
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
 
-
     # 接收消息
     # robot.enableRecvMsg()     # 可能会丢消息？
     robot.enableReceivingMsg()  # 加队列
@@ -157,7 +163,7 @@ def main(chat_type: int):
     # robot.onEveryTime("07:10", init_group_info_mysql(robot,db_utils), robot=robot)
 
     # 每天 8:30 发送新闻
-     # robot.onEveryTime("08:30", robot.newsReport)
+    # robot.onEveryTime("08:30", robot.newsReport)
 
     # 每天 18:00 提醒发日报周报月报
     #  robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
@@ -172,6 +178,7 @@ def main(chat_type: int):
 def start_flask_app():
     app.run(host='0.0.0.0', port=8888, debug=True, use_reloader=False)
 
+
 if __name__ == "__main__":
     # 创建并启动 Flask 应用的线程
     flask_thread = threading.Thread(target=start_flask_app)
@@ -184,4 +191,3 @@ if __name__ == "__main__":
     parser.add_argument('-c', type=int, default=0, help=f'选择模型参数序号: {ChatType.help_hint()}')
     args = parser.parse_args().c
     main(7)
-
