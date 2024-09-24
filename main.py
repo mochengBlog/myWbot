@@ -95,8 +95,9 @@ def send_message_to_robot():
 def sentToWxId():
     wxid = request.args.get('wxid')  # 从 URL 查询参数中获取 wxid
     text = request.args.get('text')  # 从 URL 查询参数中获取 text
+    robot.LOG.info(f"发送消息到 {wxid} : {text}")
     robot.sendTextMsg(str(text), str(wxid))  # 发送消息
-    return "OK", 200
+    return "发送消息成功", 200
 
 
 def init_group_info_mysql(robot: Robot, db_utils: DBUtils) -> None:
