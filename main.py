@@ -95,7 +95,7 @@ def send_message_to_robot():
 def sentToWxId():
     wxid = request.args.get('wxid')  # 从 URL 查询参数中获取 wxid
     text = request.args.get('text')  # 从 URL 查询参数中获取 text
-    robot.sendTextMsg(text, wxid)  # 发送消息
+    robot.sendTextMsg(str(text), str(wxid))  # 发送消息
     return "OK", 200
 
 
