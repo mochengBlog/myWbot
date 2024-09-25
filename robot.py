@@ -223,6 +223,7 @@ class Robot(Job):
                     self.sendImage(doImage.get_image_path(content), msg.roomid)
                 if "#mj" in content:
                     content = content.replace("#mj", "")
+                    self.sendTextMsg("正在提交任务", msg.roomid, msg.sender)
                     result = doImage.get_image_path_by_mj(content).json()
                     if "error" in result:
                         self.sendTextMsg("充点钱啊 死鬼", msg.roomid, msg.sender)
