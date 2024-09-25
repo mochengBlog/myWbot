@@ -95,7 +95,7 @@ def get_task_process(taskId: str) -> str:
 
 
 if __name__ == '__main__':
-    get_image_path_by_mj("A bear reads a book in a bamboo forest with a cute corgi printed on the cover, digital art styles --ar 16:9")
+    get_image_path_by_mj("A big, powerful bear, holding a corgi in one hand and a book with a green leaf on the cover in the other. The bear's expression was serious and cold. The drawing uses a cartoonish style")
 
     # url = save_image_by_url("https://img.innk.cc/attachments/1284058188978585674/1284163556786311280/jiisd._2_cats_sleeping_one_cat_is_white_the_other_one_is_black._9026432c-c22f-44b0-96e9-58adb2386a97.png?ex=66e5a202&is=66e45082&hm=b503537c24fc53260f8afdf63bf814f47604cd72944b99da187df74009740d5b&")
     # print(url)

@@ -225,7 +225,7 @@ class Robot(Job):
                     content = content.replace("#mj", "")
                     self.sendTextMsg("正在提交任务", msg.roomid, msg.sender)
                     result = doImage.get_image_path_by_mj(content).json()
-                    if "error" in result | result.status_code == 400:
+                    if "error" in result:
                         self.sendTextMsg("充点钱啊 死鬼", msg.roomid, msg.sender)
                     if result['code'] == 1:
                         self.sendTextMsg("提交成功,请等待(40-120s),taskId为" + result['result'] + "", msg.roomid, msg.sender)
