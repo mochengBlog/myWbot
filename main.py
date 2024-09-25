@@ -70,7 +70,8 @@ def get_mj_info(robot: Robot) -> None:
                 robot.sendTextMsg("任务成功，图像地址：" + data['imageUrl'], row['room_id'], row['sender_id'])
                 robot.sendImage(save_image_by_url(data['imageUrl']), row['room_id'])
             else:
-                robot.LOG.info("操作失败，错误代码:", data['code'])
+                robot.sendTextMsg("爷欠费了：" + str(data['status']), row['room_id'], row['sender_id'])
+
 
 
 def reminderSignInfo(robot: Robot) -> None:
