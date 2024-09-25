@@ -242,7 +242,9 @@ class Robot(Job):
                                              'sender_id': msg.sender,
                                              'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
                         self.sendTextMsg(result['result']+"排队中，请等待", msg.roomid,msg.sender)
-
+                    else:
+                        self.LOG.info(result)  # 打印信息
+                        self.sendTextMsg("提交失败,自己改bug", msg.roomid, msg.sender)
                 if "#壁纸" in content:
                     if content == "#壁纸":
                         self.sendTextMsg("请输入壁纸关键字:" + McTest.get_type_enum(), msg.roomid)
