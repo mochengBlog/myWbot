@@ -161,7 +161,7 @@ def main(chat_type: int):
     # 每天 7 点初始化群聊
     robot.onEveryTime("07:00", init_group_info, robot=robot)
 
-    robot.onEverySeconds(20, get_mj_info, robot=robot)
+    robot.onEverySeconds(80, get_mj_info, robot=robot)
     # robot.onEveryTime("07:10", init_group_info_mysql(robot,db_utils), robot=robot)
 
     # 每天 8:30 发送新闻

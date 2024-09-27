@@ -413,3 +413,5 @@ class Robot(Job):
         news = News().get_important_news()
         for r in receivers:
             self.sendTextMsg(news, r)
+    def sendXml(self) -> None:
+        self.wcf.send_xml()
