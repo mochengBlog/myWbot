@@ -62,7 +62,8 @@ def get_mj_info(robot: Robot) -> None:
             robot.LOG.info(data)
             # 处理数据
             if data['status'] == 'IN_PROGRESS':
-                robot.sendTextMsg("任务进度：" + str(data['progress']), row['room_id'], row['sender_id'])
+                pass
+                # robot.sendTextMsg("任务进度：" + str(data['progress']), row['room_id'], row['sender_id'])
             elif data['status'] == 'FAILURE':
                 robot.sendTextMsg("任务失败", row['room_id'], row['sender_id'])
             elif data['status'] == 'SUCCESS':
