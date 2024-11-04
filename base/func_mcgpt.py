@@ -10,9 +10,8 @@ def load_prompt_from_file(filepath):
         return file.read().strip()
 class McGPTAPI():
     GLOBAL_MODEL = "gpt-4o-mini"
-    GLOBAL_URL = "https://ephone.ai/v1/chat/completions"
+    GLOBAL_URL = "https://api.ephone.ai/v1/chat/completions"
     GLOBAL_KEY = "sk-dSkpzziNCgohLR1uEe29001aB6Ef4bD4Bc84228d18D7E445"
-
     def __init__(self) -> None:
         self.api_key = McGPTAPI.GLOBAL_KEY
         self.url = McGPTAPI.GLOBAL_URL
