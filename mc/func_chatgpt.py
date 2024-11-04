@@ -5,8 +5,8 @@ from random import randint
 from datetime import datetime
 class McGPTAPI():
     GLOBAL_MODEL = "gpt-4o-mini"
-    GLOBAL_URL = "http://110.40.41.167:21531/v1/chat/completions"
-    GLOBAL_KEY = "sk-cBmokkQJRF25YZBp6c848a1a558649F7993fEb1083638e85"
+    GLOBAL_URL = "https://ephone.ai/v1/chat/completions"
+    GLOBAL_KEY = "sk-dSkpzziNCgohLR1uEe29001aB6Ef4bD4Bc84228d18D7E445"
 
     def __init__(self) -> None:
         self.api_key = McGPTAPI.GLOBAL_KEY
