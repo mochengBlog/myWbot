@@ -147,7 +147,7 @@ def main(chat_type: int):
 
     robot.LOG.info(f"WeChatRobot【{__version__}】成功启动···")
     # 初始化群聊
-    init_group_info(robot)
+    #init_group_info(robot)
     # 用于mysql
     #init_group_info_mysql(robot,db_utils)
 
@@ -160,9 +160,9 @@ def main(chat_type: int):
     # 每天 8 点发送天气预报
     robot.onEveryTime("08:00", weather_report, robot=robot)
     # 每天 7 点初始化群聊
-    robot.onEveryTime("07:00", init_group_info, robot=robot)
+    #robot.onEveryTime("07:00", init_group_info, robot=robot)
 
-    robot.onEverySeconds(80, get_mj_info, robot=robot)
+    #robot.onEverySeconds(80, get_mj_info, robot=robot)
     # robot.onEveryTime("07:10", init_group_info_mysql(robot,db_utils), robot=robot)
 
     # 每天 8:30 发送新闻
