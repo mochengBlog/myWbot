@@ -9,7 +9,7 @@ def load_prompt_from_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as file:
         return file.read().strip()
 class McGPTAPI():
-    GLOBAL_MODEL = "gpt-4o-mini"
+    GLOBAL_MODEL = "gpt-4o"
     GLOBAL_URL = "https://api.ephone.ai/v1/chat/completions"
     GLOBAL_KEY = "sk-dSkpzziNCgohLR1uEe29001aB6Ef4bD4Bc84228d18D7E445"
     def __init__(self) -> None:
@@ -36,7 +36,7 @@ class McGPTAPI():
             PROMPT = load_prompt_from_file(PROMPT_FILE_PATH)
         except Exception as e:
             logging.error(f"Failed to load prompt from file: {e}")
-            PROMPT = "请将以下聊天记录进行总结：\n"  # 如果加载失败，使用默认值
+            PROMPT = "带入一个只有幼儿园文化的人的视角，与我进行对话：\n"  # 如果加载失败，使用默认值
         rsp = ""
         try:
             payload = {
@@ -123,7 +123,7 @@ if __name__ == "__main__":
         exit(0)
 
     xxx = McGPTAPI()
-    rsp = xxx.get_answer("你是谁", "xxx")
+    rsp = xxx.get_answer("李白是谁", "xxx")
     print(rsp)
 
 
