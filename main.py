@@ -158,7 +158,7 @@ def main(chat_type: int):
     # robot.enableRecvMsg()     # 可能会丢消息？
     robot.enableReceivingMsg()  # 加队列
     # 每天 8 点发送天气预报
-    robot.onEveryTime("08:00", weather_report, robot=robot)
+    # robot.onEveryTime("08:00", weather_report, robot=robot)
     # 每天 7 点初始化群聊
     #robot.onEveryTime("07:00", init_group_info, robot=robot)
 
