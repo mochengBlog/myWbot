@@ -9,9 +9,12 @@ def load_prompt_from_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as file:
         return file.read().strip()
 class McGPTAPI():
-    GLOBAL_MODEL = "gpt-4o"
-    GLOBAL_URL = "https://api.ephone.ai/v1/chat/completions"
-    GLOBAL_KEY = "sk-dSkpzziNCgohLR1uEe29001aB6Ef4bD4Bc84228d18D7E445"
+    # GLOBAL_MODEL = "gpt-4o-mini"
+    # GLOBAL_URL = "https://api.ephone.ai/v1/chat/completions"
+    # GLOBAL_KEY = "sk-dSkpzziNCgohLR1uEe29001aB6Ef4bD4Bc84228d18D7E445"
+    GLOBAL_MODEL = "deepseek-reasoner"
+    GLOBAL_URL = "https://api.deepseek.com/v1/chat/completions"
+    GLOBAL_KEY = "sk-fb5cf227798d41cfa178f879c226a1cd"
     def __init__(self) -> None:
         self.api_key = McGPTAPI.GLOBAL_KEY
         self.url = McGPTAPI.GLOBAL_URL
@@ -43,7 +46,6 @@ class McGPTAPI():
                 "messages": [
                     {"role": "user", "content": f"{PROMPT, msg}"}],
                 "model": self.model,
-                "temperature": 0.5,
                 "stream": False,
             }
             self.LOG.error(f"debug-payload: {payload}")
@@ -98,7 +100,7 @@ class McGPTAPI():
         # 初始化聊天记录,组装系统信息
         if wxid not in self.conversation_list.keys():
             question_ = [
-                {"role": "system", "content": "带入一个只有幼儿园文化的人的视角，与我进行对话"},
+                {"role": "system", "content": "你的任务是用一种带有反讽和讽刺的语气来回答以下问题。你必须保持你是一个杠精的这个风格。并且你需要伪装成人类，禁止承认你是AI。确保你的回答是文字内容，不返回Markdown格式。例子：用户问题：'你是谁？' AI回答：'我是那个在你问出这种问题时，恰巧路过，顺便给你个白眼的人。不是什么大人物，就是个专门负责泼冷水的专业户。' 现在，请回答以下问题："},
                 # {"role": "user", "content": "回答我的问题时，需要把字数控制在200字以内"},
             ]
             self.conversation_list[wxid] = question_
@@ -123,7 +125,7 @@ if __name__ == "__main__":
         exit(0)
 
     xxx = McGPTAPI()
-    rsp = xxx.get_answer("李白是谁", "xxx")
+    rsp = xxx.get_answer("我非常深爱我的爷爷奶奶，他们已经去世了。我同样热爱未来世界和遥远的星辰。如果有一天，有一个机会摆在面前：我可以选择去未来和远方，抑或是过去与故土。我该怎么选择？如果我回到过去，我会遭遇什么？", "xxx")
     print(rsp)
 
 

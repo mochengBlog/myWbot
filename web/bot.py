@@ -3,14 +3,13 @@ import os
 import logging
 import requests
 import telebot
-import sqlite3
 import pymysql
 
 logging.basicConfig(level=logging.WARNING)
 # 或者针对特定的日志记录器
 logging.getLogger('urllib3').setLevel(logging.WARNING)
 
-conn = pymysql.connect(host='localhost', user='root', password='admin', db='telebot')
+conn = pymysql.connect(host='192.168.188.1', user='root', password='root', db='telebot')
 cursor = conn.cursor()
 
 bot = telebot.TeleBot('6977364720:AAFNH1GGTfuk6EMQdTyY_k0catMJHfyCxEU')
@@ -47,7 +46,7 @@ def handle_photo(message):
     downloaded_file = bot.download_file(photo_file.file_path)
     file_name = photo_file.file_unique_id
     # 保存路径
-    save_path = "/Users/mocheng/Desktop/img/" + file_name + ".jpg"
+    save_path = "/home/mocheng/tg/img/" + file_name + ".jpg"
     # 保存照片文件
     with open(save_path, "wb") as f:
         f.write(downloaded_file)
