@@ -255,7 +255,7 @@ class Robot(Job):
                                      msg.roomid)
                 if "#签到" in content:
                     groupSign.insert(msg.roomid, msg.sender, "已签到")
-                    self.sendTextMsg("签到成功",
+                    self.sendTextMsg("签到成功，明天也要努力呦！",
                                      msg.roomid, msg.sender)
                 if "#补签" in content:
                     if "昨天" in content or "前天" in content:
