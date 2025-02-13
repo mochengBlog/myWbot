@@ -197,7 +197,7 @@ def main(chat_type: int):
 
     # 每天 18:00 提醒发日报周报月报
     #  robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
-    check_duolingo(robot, db_utils)
+    # check_duolingo(robot, db_utils)
     # 每天 23:00 提醒 签到详情
     robot.onEveryTime("23:00", check_duolingo, robot=robot)
 
