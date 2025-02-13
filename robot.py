@@ -254,13 +254,19 @@ class Robot(Job):
                     self.sendTextMsg("签到规则为:发送 #签到 即可签到,2点前算作昨天 ; 发送 #补签昨天 即可补签前一日",
                                      msg.roomid)
                 if "#签到" in content:
-                    groupSign.insert(msg.roomid, msg.sender, "已签到")
+                    self.dbUtils.insert('group_sign',
+                                        {'room_id': msg.roomid,
+                                         'vxid': msg.sender,
+                                         'sign': 1,
+                                         'sign_date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+                    # groupSign.insert(msg.roomid, msg.sender, "已签到")
+                    self.dbUtils.SignInsert(msg.roomid, msg.sender, 1)
                     self.sendTextMsg("签到成功，明天也要努力呦！",
                                      msg.roomid, msg.sender)
                 if "#补签" in content:
                     if "昨天" in content or "前天" in content:
-                        groupSign.insertBQ(msg.roomid, msg.sender, "已签到", content)
-                        self.sendTextMsg("补签成功",
+                        self.dbUtils.SignInsertBQ(msg.roomid, msg.sender, 1, content)
+                        self.sendTextMsg("下不为例！",
                                          msg.roomid, msg.sender)
                     else:
                         self.sendTextMsg("暂不支持其他天补签", msg.roomid)

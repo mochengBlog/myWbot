@@ -66,7 +66,7 @@ class DBUtils(metaclass=SingletonMeta):  # 注意这里应用了元类
         DBUtils._instance = self
 
     def execute_query(self, query, params=None):
-        connection = self.db_pool.get_connection()
+        connection = self.get_db_connection()
         if connection is None:
             raise Exception("No available database connections.")
         try:
@@ -74,10 +74,11 @@ class DBUtils(metaclass=SingletonMeta):  # 注意这里应用了元类
                 cursor.execute(query, params or ())
                 result = cursor.fetchall()
             connection.commit()
-            return result
+            return result or []  # 确保返回空列表而不是 None
         except MySQLError as e:
             print(f"Database error: {e}")
             connection.rollback()
+            return []  # 在发生错误时返回空列表
         finally:
             self.db_pool.release_connection(connection)
 
@@ -103,15 +104,59 @@ class DBUtils(metaclass=SingletonMeta):  # 注意这里应用了元类
         query = f"DELETE FROM {table}{condition_str}"
         self.execute_query(query)
 
-    def insert_by_robot(self, table: str, data : dict):
+    def insert_by_robot(self, table: str, data: dict):
         db = DBUtils(db_pool)
         db.insert(table, data)
-    def getMessageInfoByCount(self,room_id: str, count: int):
+
+    def getMessageInfoByCount(self, room_id: str, count: int):
         db = DBUtils(self.db_pool)
-        return db.execute_query(f"SELECT sender_id,(SELECT NAME FROM room_info WHERE wxid=sender_id AND room_id='{room_id}') AS name,message FROM messages WHERE room_id='{room_id}' AND message_type=1 ORDER BY date  LIMIT {count} ")
+        return db.execute_query(
+            f"SELECT sender_id,(SELECT NAME FROM room_info WHERE wxid=sender_id AND room_id='{room_id}') AS name,message FROM messages WHERE room_id='{room_id}' AND message_type=1 ORDER BY date  LIMIT {count} ")
 
+    def get_db_connection(self):
+        return self.db_pool.get_connection()
 
+    def SignInsert(self, room_id, vx_id, sign):
+        # 获取今天日期
+        if datetime.datetime.now().hour < 2:
+            date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        else:
+            date = datetime.datetime.now().strftime("%Y-%m-%d")
 
+        # 查询是否已经存在
+        rows = self.execute_query("SELECT * FROM group_sign WHERE room_id = %s AND vxid = %s AND sign_date = %s",
+                                  (room_id, vx_id, date))
+
+        if len(rows) == 0:
+            print("插入签到")
+            self.execute_query("INSERT INTO group_sign (room_id, vxid, sign, sign_date) VALUES (%s, %s, %s, %s)",
+                               (room_id, vx_id, sign, date))
+        else:
+            print("更新签到")
+            # 如果需要更新，可以在这里添加更新逻辑
+            self.execute_query("UPDATE group_sign SET sign = %s WHERE room_id = %s AND vxid = %s AND sign_date = %s",
+                               (sign, room_id, vx_id, date))
+
+    def SignInsertBQ(self, room_id, vx_id, sign, context):
+        if "昨天" in context:
+            date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        elif "前天" in context:
+            date = (datetime.datetime.now() - datetime.timedelta(days=2)).strftime("%Y-%m-%d")
+        else:
+            date = datetime.datetime.now().strftime("%Y-%m-%d")  # 默认今天
+
+        # 查询是否已经存在
+        rows = self.execute_query("SELECT * FROM group_sign WHERE room_id = %s AND vxid = %s AND sign_date = %s",
+                                  (room_id, vx_id, date))
+        if len(rows) == 0:
+            print("插入签到")
+            self.execute_query("INSERT INTO group_sign (room_id, vxid, sign, sign_date,info) VALUES (%s, %s, %s, %s,'补签')",
+                               (room_id, vx_id, sign, date))
+        else:
+            print("更新签到")
+            # 如果需要更新，可以在这里添加更新逻辑
+            self.execute_query("UPDATE group_sign SET sign = %s , info = '补签' WHERE room_id = %s AND vxid = %s AND sign_date = %s ",
+                               (sign, room_id, vx_id, date))
 
 
 # Usage
@@ -136,15 +181,16 @@ if __name__ == "__main__":
     # 确保只创建一次DBUtils实例
     db_utils = DBUtils(db_pool)
     # 根据条件 查询聊天记录  1 时间倒序查询100条 2 根据时间日期查询
-    rows = db_utils.getMessageInfoByCount("24236590105@chatroom", 100)
+    # rows = db_utils.getMessageInfoByCount("24236590105@chatroom", 100)
 
-    messages = []
-    if not rows:
-        print("No rows found.")
-    else:
-        for row in rows:
-            sender_id = row['sender_id']
-            sender_name = row['name']
-            message = row['message']
-            messages.append(f"{sender_name}说:{message}")
-    print(messages)
+    # messages = []
+    # if not rows:
+    #     print("No rows found.")
+    # else:
+    #     for row in rows:
+    #         sender_id = row['sender_id']
+    #         sender_name = row['name']
+    #         message = row['message']
+    #         messages.append(f"{sender_name}说:{message}")
+    # print(messages)
+    db_utils.SignInsertBQ('111', '123', 1, "前天");
