@@ -10,6 +10,7 @@ import mc.groupSign as groupSign
 from configuration import Config
 from constants import ChatType
 from db.pySql import DBConnectionPool, DBUtils
+from mc.duo_lin_guo import check_duolingo_status
 from mc.func_doImage import get_task_process, save_image_by_url
 from robot import Robot, __version__
 from wcferry import Wcf
@@ -114,6 +115,27 @@ def init_group_info_mysql(robot: Robot, db_utils: DBUtils) -> None:
             #查询该room_id 下的wxid是否存，若存在 判断name是否相等
             db_utils.insert("room_info", {"room_id": r, "vxid": wxid, "name": name})
 
+def check_duolingo(robot: Robot, db_utils: DBUtils) -> None:
+    # 用户映射
+    user_map = {
+        "淘宝": 1411707690,
+        "强哥（白国强）": 1475491603,
+        "梦佬（梦短情长）": 1411686409,
+        "大眼": 1405913981,
+        "程佬（荣焱炎炎）": 1411679659,
+        "杨峰": 30783396,
+        "七喜": 1424644905,
+        "远仔（懒得起名君）": 1430893956,
+        "lo仔（loafer）": 1451803632
+    }
+    status_dict = check_duolingo_status(user_map)
+    robot.sendTextMsg("多邻国打卡结果", "43541810338@chatroom")
+    for name, status in status_dict.items():
+        if status.get("status") == "error":
+            robot.sendTextMsg(f"{name}: {status['message']}", "43541810338@chatroom")
+        else:
+            robot.sendTextMsg(f"{name}: {status['status']}", "43541810338@chatroom")
+
 
 def main(chat_type: int):
     global robot, wcf, db_utils  # 确保这些变量是全局的，以便在线程中访问
@@ -170,9 +192,9 @@ def main(chat_type: int):
 
     # 每天 18:00 提醒发日报周报月报
     #  robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
-
+    check_duolingo(robot, db_utils)
     # 每天 23:00 提醒 签到详情
-    # robot.onEveryTime("23:00", reminderSignInfo, robot=robot)
+    robot.onEveryTime("23:00", check_duolingo, robot=robot)
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
