@@ -35,6 +35,7 @@ from mc import groupSign
 from db.pySql import DBUtils, DBConnectionPool
 from mc.dida365_api import sendDIDA365Email
 from mc.Iching import IChing
+from mc.duo_lin_guo import check_duolingo_status
 
 
 class Robot(Job):
@@ -263,6 +264,30 @@ class Robot(Job):
                     self.dbUtils.SignInsert(msg.roomid, msg.sender, 1)
                     self.sendTextMsg("签到成功，明天也要努力呦！",
                                      msg.roomid, msg.sender)
+                if "#多邻国启动" in content:
+                    # 用户映射
+                    user_map = {
+                        "淘宝": 1411707690,
+                        "强哥（白国强）": 1475491603,
+                        "梦佬（梦短情长）": 1411686409,
+                        "大眼": 1405913981,
+                        "杨峰": 30783396,
+                        "远宝（懒得起名君）": 1430893956,
+                        "lo仔（loafer）": 1451803632
+                    }
+                    status_dict = check_duolingo_status(user_map)
+                    self.sendTextMsg("多邻国打卡结果", "43541810338@chatroom")
+                    # 将所有用户的打卡状态合并到一个字符串中
+                    status_lines = []
+                    for name, status in status_dict.items():
+                        if status.get("status") == "error":
+                            status_lines.append(f"{name}: {status['message']}")
+                        else:
+                            status_lines.append(f"{name} {status['status']}")
+
+                    # 使用换行符连接所有状态信息并打印
+                    self.sendTextMsg('\n'.join(status_lines), "43541810338@chatroom")
+
                 if "#补签" in content:
                     if "昨天" in content or "前天" in content:
                         self.dbUtils.SignInsertBQ(msg.roomid, msg.sender, 1, content)
