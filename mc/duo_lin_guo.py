@@ -111,14 +111,15 @@ def main():
         "lo仔（loafer）": 1451803632
     }
     status_dict = check_duolingo_status(user_map)
-
-    # 打印每个用户的打卡状态
+    status_lines = []
     for name, status in status_dict.items():
         if status.get("status") == "error":
-            print(f"{name}: {status['message']}")
+            status_lines.append(f"{name}: {status['message']}")
         else:
-            print(f"{name} {status['status']}")
+            status_lines.append(f"{name} {status['status']}")
 
+    # 使用换行符连接所有状态信息并打印
+    print('\n'.join(status_lines))
 
 if __name__ == "__main__":
     main()

@@ -125,16 +125,21 @@ def check_duolingo(robot: Robot, db_utils: DBUtils) -> None:
         "程佬（荣焱炎炎）": 1411679659,
         "杨峰": 30783396,
         "七喜": 1424644905,
-        "远仔（懒得起名君）": 1430893956,
+        "远宝（懒得起名君）": 1430893956,
         "lo仔（loafer）": 1451803632
     }
     status_dict = check_duolingo_status(user_map)
     robot.sendTextMsg("多邻国打卡结果", "43541810338@chatroom")
+    # 将所有用户的打卡状态合并到一个字符串中
+    status_lines = []
     for name, status in status_dict.items():
         if status.get("status") == "error":
-            robot.sendTextMsg(f"{name}: {status['message']}", "43541810338@chatroom")
+            status_lines.append(f"{name}: {status['message']}")
         else:
-            robot.sendTextMsg(f"{name}: {status['status']}", "43541810338@chatroom")
+            status_lines.append(f"{name} {status['status']}")
+
+    # 使用换行符连接所有状态信息并打印
+    robot.sendTextMsg('\n'.join(status_lines), "43541810338@chatroom")
 
 
 def main(chat_type: int):
