@@ -9,12 +9,12 @@ def load_prompt_from_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as file:
         return file.read().strip()
 class McGPTAPI():
-    # GLOBAL_MODEL = "gpt-4o-mini"
-    # GLOBAL_URL = "https://api.ephone.ai/v1/chat/completions"
-    # GLOBAL_KEY = "sk-dSkpzziNCgohLR1uEe29001aB6Ef4bD4Bc84228d18D7E445"
-    GLOBAL_MODEL = "deepseek-reasoner"
-    GLOBAL_URL = "https://api.deepseek.com/v1/chat/completions"
-    GLOBAL_KEY = "sk-fb5cf227798d41cfa178f879c226a1cd"
+    GLOBAL_MODEL = "gpt-4o-mini"
+    GLOBAL_URL = "https://api.ephone.ai/v1/chat/completions"
+    GLOBAL_KEY = "sk-dSkpzziNCgohLR1uEe29001aB6Ef4bD4Bc84228d18D7E445"
+    # GLOBAL_MODEL = "deepseek-reasoner"
+    # GLOBAL_URL = "https://api.deepseek.com/v1/chat/completions"
+    # GLOBAL_KEY = "sk-fb5cf227798d41cfa178f879c226a1cd"
     def __init__(self) -> None:
         self.api_key = McGPTAPI.GLOBAL_KEY
         self.url = McGPTAPI.GLOBAL_URL
