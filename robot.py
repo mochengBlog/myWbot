@@ -258,10 +258,10 @@ class Robot(Job):
                     self.sendTextMsg("签到成功，明天也要努力呦！",
                                      msg.roomid, msg.sender)
                 if "#多邻国启动" in content:
-                    user_map = DBUtils.getDuoLinGuoUser()
+                    user_map = self.dbUtils.getDuoLinGuoUser()
                     status_dict = check_duolingo_status(user_map)
                     # 写入签到结果
-                    DBUtils.DuoLinGuoSignInsert(status_dict, "43541810338@chatroom")
+                    self.dbUtils.DuoLinGuoSignInsert(status_dict, "43541810338@chatroom")
                     self.sendTextMsg("多邻国打卡结果", "43541810338@chatroom")
                     # 将所有用户的打卡状态合并到一个字符串中
                     status_lines = []
