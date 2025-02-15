@@ -29,7 +29,7 @@ def check_duolingo_status(user_map):
 
     for name, user_id in user_map.items():
         # 构建请求URL
-        start_date_str = (date.today() - timedelta(days=7)).strftime("%Y-%m-%d")
+        start_date_str = (date.today() - timedelta(days=2)).strftime("%Y-%m-%d")
         url = f"https://www.duolingo.cn/2017-06-30/users/{user_id}/xp_summaries"
         params = {
             "startDate": start_date_str,
@@ -92,7 +92,7 @@ def check_duolingo_status(user_map):
         if not has_checked:
             status_dict[name] = {"status": "未打卡", "gained_xp": 0}
 
-        time.sleep(0.1)
+        time.sleep(0.2)
 
     return status_dict
 

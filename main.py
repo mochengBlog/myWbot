@@ -116,18 +116,7 @@ def init_group_info_mysql(robot: Robot, db_utils: DBUtils) -> None:
             db_utils.insert("room_info", {"room_id": r, "vxid": wxid, "name": name})
 
 def check_duolingo(robot: Robot, db_utils: DBUtils) -> None:
-    # 用户映射
-    user_map = {
-        "淘宝": 1411707690,
-        "强哥（白国强）": 1475491603,
-        "梦佬（梦短情长）": 1411686409,
-        "大眼": 1405913981,
-        "程佬（荣焱炎炎）": 1411679659,
-        "杨峰": 30783396,
-        "七喜": 1424644905,
-        "远宝（懒得起名君）": 1430893956,
-        "lo仔（loafer）": 1451803632
-    }
+    user_map = DBUtils.getDuoLinGuoUser()
     status_dict = check_duolingo_status(user_map)
     robot.sendTextMsg("多邻国打卡结果", "43541810338@chatroom")
     # 将所有用户的打卡状态合并到一个字符串中
@@ -138,6 +127,7 @@ def check_duolingo(robot: Robot, db_utils: DBUtils) -> None:
         else:
             status_lines.append(f"{name} {status['status']}")
 
+    DBUtils.DuoLinGuoSignInsert(status_dict,"43541810338@chatroom")
     # 使用换行符连接所有状态信息并打印
     robot.sendTextMsg('\n'.join(status_lines), "43541810338@chatroom")
 
@@ -199,7 +189,7 @@ def main(chat_type: int):
     #  robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
     # check_duolingo(robot, db_utils)
     # 每天 23:00 提醒 签到详情
-    robot.onEveryTime("21:00", check_duolingo, robot=robot)
+    robot.onEveryTime("21:00", check_duolingo(robot, db_utils), robot=robot)
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()

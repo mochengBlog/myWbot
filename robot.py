@@ -181,9 +181,6 @@ class Robot(Job):
             # if msg.type == 49:  # 合并转发的聊天记录，CompressContent 中有详细聊天记录，BytesExtra 中有图片视频等的缓存
             #if msg.type == 3:   # 如果是图片把图片上传到图床
 
-
-
-
             # 如果在群里被 @
             if msg.roomid not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
                 return
@@ -229,20 +226,21 @@ class Robot(Job):
                     if "error" in result:
                         self.sendTextMsg("充点钱啊 死鬼", msg.roomid, msg.sender)
                     if result['code'] == 1:
-                        self.sendTextMsg("提交成功,请等待(40-120s),taskId为" + result['result'] + "", msg.roomid, msg.sender)
+                        self.sendTextMsg("提交成功,请等待(40-120s),taskId为" + result['result'] + "", msg.roomid,
+                                         msg.sender)
                         # 数据存储在sqllite中
                         self.dbUtils.insert('mj_info',
-                                       {'room_id': msg.roomid,
-                                        'task_id': result['result'],
-                                        'sender_id': msg.sender,
-                                        'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+                                            {'room_id': msg.roomid,
+                                             'task_id': result['result'],
+                                             'sender_id': msg.sender,
+                                             'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
                     elif result['code'] == 22:
                         self.dbUtils.insert('mj_info',
                                             {'room_id': msg.roomid,
                                              'task_id': result['result'],
                                              'sender_id': msg.sender,
                                              'date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
-                        self.sendTextMsg(result['result']+"排队中，请等待", msg.roomid,msg.sender)
+                        self.sendTextMsg(result['result'] + "排队中，请等待", msg.roomid, msg.sender)
                     else:
                         self.LOG.info(result)  # 打印信息
                         self.sendTextMsg("提交失败,自己改bug", msg.roomid, msg.sender)
@@ -255,26 +253,15 @@ class Robot(Job):
                     self.sendTextMsg("签到规则为:发送 #签到 即可签到,2点前算作昨天 ; 发送 #补签昨天 即可补签前一日",
                                      msg.roomid)
                 if "#签到" in content:
-                    self.dbUtils.insert('group_sign',
-                                        {'room_id': msg.roomid,
-                                         'vxid': msg.sender,
-                                         'sign': 1,
-                                         'sign_date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
                     # groupSign.insert(msg.roomid, msg.sender, "已签到")
                     self.dbUtils.SignInsert(msg.roomid, msg.sender, 1)
                     self.sendTextMsg("签到成功，明天也要努力呦！",
                                      msg.roomid, msg.sender)
                 if "#多邻国启动" in content:
-                    # 用户映射
-                    user_map = {
-                        "淘宝": 1411707690,
-                        "梦佬（梦短情长）": 1411686409,
-                        "大眼": 1405913981,
-                        "杨峰": 30783396,
-                        "远宝（懒得起名君）": 1430893956,
-                        "lo仔（loafer）": 1451803632
-                    }
+                    user_map = DBUtils.getDuoLinGuoUser()
                     status_dict = check_duolingo_status(user_map)
+                    # 写入签到结果
+                    DBUtils.DuoLinGuoSignInsert(status_dict, "43541810338@chatroom")
                     self.sendTextMsg("多邻国打卡结果", "43541810338@chatroom")
                     # 将所有用户的打卡状态合并到一个字符串中
                     status_lines = []
@@ -443,5 +430,6 @@ class Robot(Job):
         news = News().get_important_news()
         for r in receivers:
             self.sendTextMsg(news, r)
+
     def sendXml(self) -> None:
         self.wcf.send_xml()

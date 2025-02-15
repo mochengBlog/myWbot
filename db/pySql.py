@@ -5,6 +5,7 @@ from pymysql.err import MySQLError
 from queue import Queue, Empty
 from threading import Thread, Lock
 from configuration import Config
+from mc.duo_lin_guo import check_duolingo_status
 
 
 class SingletonMeta(type):
@@ -126,17 +127,66 @@ class DBUtils(metaclass=SingletonMeta):  # 注意这里应用了元类
         # 查询是否已经存在
         rows = self.execute_query("SELECT * FROM group_sign WHERE room_id = %s AND vxid = %s AND sign_date = %s",
                                   (room_id, vx_id, date))
+        # 查询name 先查是否存在多邻国昵称 否则插入群昵称
+        name = ''
+        result = self.execute_query("SELECT * FROM duo_lin_guo_user WHERE vxid = %s", (vx_id,))
+        if len(result) == 0:
+            room_result = self.execute_query("SELECT * FROM room_info WHERE vxid = %s and room_id = %s", (vx_id,room_id))
+            name = room_result[0]['name']
+        else:
+            name = result[0]['name']
 
         if len(rows) == 0:
             print("插入签到")
-            self.execute_query("INSERT INTO group_sign (room_id, vxid, sign, sign_date) VALUES (%s, %s, %s, %s)",
-                               (room_id, vx_id, sign, date))
+            self.execute_query("INSERT INTO group_sign (room_id, vxid, sign, sign_date, name) VALUES (%s, %s, %s, %s)",
+                               (room_id, vx_id, sign, date, name))
         else:
             print("更新签到")
             # 如果需要更新，可以在这里添加更新逻辑
             self.execute_query("UPDATE group_sign SET sign = %s WHERE room_id = %s AND vxid = %s AND sign_date = %s",
-                               (sign, room_id, vx_id, date))
+                               (sign, room_id, vx_id, date, name))
+    def DuoLinGuoSignInsert(self, status_dict, room_id):
+        # 获取今天日期
+        if datetime.datetime.now().hour < 2:
+            date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        else:
+            date = datetime.datetime.now().strftime("%Y-%m-%d")
 
+        for user_name, info in status_dict.items():
+            status = info['status']
+            print(f"用户名: {user_name}, 打卡状态: {status}")
+
+            # 查询vxid
+
+            vxid_result = self.execute_query("SELECT * FROM duo_lin_guo_user WHERE name = %s", (user_name,))
+            vxid = vxid_result[0]['vxid']
+            name = vxid_result[0]['name']
+            # 查询是否已经存在
+            rows = self.execute_query("SELECT * FROM group_sign WHERE room_id = %s AND vxid = %s AND sign_date = %s",
+                                      (room_id, vxid, date))
+            sign = 1 if status == '已打卡' else 0
+            if len(rows) == 0:
+                print("插入签到")
+                self.execute_query("INSERT INTO group_sign (room_id, vxid, sign, sign_date,name,info) VALUES (%s, %s, %s, %s, %s, %s)",
+                                   (room_id, vxid, sign, date, name,'多邻国录入打卡'))
+            else:
+                print("更新签到")
+                # 如果需要更新，可以在这里添加更新逻辑
+                self.execute_query("UPDATE group_sign SET sign = %s WHERE room_id = %s AND vxid = %s AND sign_date = %s",
+                                   (sign, room_id, vxid, date))
+    def getDuoLinGuoUser(self):
+        # 查询多邻国用户
+        rows = self.execute_query("SELECT * FROM duo_lin_guo_user ")
+        # 创建用户映射
+        user_map = {}
+
+        # 遍历查询结果并填充 user_map
+        for row in rows:
+            name = row['name']  # 假设每行是字典，并包含 'name' 和 'user_id' 键
+            user_id = row['user_id']
+            user_map[name] = user_id
+
+        return user_map
     def SignInsertBQ(self, room_id, vx_id, sign, context):
         if "昨天" in context:
             date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
@@ -193,4 +243,14 @@ if __name__ == "__main__":
     #         message = row['message']
     #         messages.append(f"{sender_name}说:{message}")
     # print(messages)
-    db_utils.SignInsertBQ('111', '123', 1, "前天");
+    # db_utils.SignInsertBQ('111', '123', 1, "前天");
+    user_map = db_utils.getDuoLinGuoUser()
+
+    print(user_map)
+    status_dict = check_duolingo_status(user_map)
+    # 将所有用户的打卡状态合并到一个字符串中
+    db_utils.DuoLinGuoSignInsert(status_dict,"43541810338@chatroom")
+
+
+    # print('\n'.join(status_lines))
+
