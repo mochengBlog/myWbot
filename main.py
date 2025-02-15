@@ -116,7 +116,7 @@ def init_group_info_mysql(robot: Robot, db_utils: DBUtils) -> None:
             db_utils.insert("room_info", {"room_id": r, "vxid": wxid, "name": name})
 
 def check_duolingo(robot: Robot, db_utils: DBUtils) -> None:
-    user_map = DBUtils.getDuoLinGuoUser()
+    user_map = db_utils.getDuoLinGuoUser()
     status_dict = check_duolingo_status(user_map)
     robot.sendTextMsg("多邻国打卡结果", "43541810338@chatroom")
     # 将所有用户的打卡状态合并到一个字符串中
