@@ -127,7 +127,7 @@ def check_duolingo(robot: Robot, db_utils: DBUtils) -> None:
         else:
             status_lines.append(f"{name} {status['status']}")
 
-    DBUtils.DuoLinGuoSignInsert(status_dict,"43541810338@chatroom")
+    db_utils.DuoLinGuoSignInsert(status_dict,"43541810338@chatroom")
     # 使用换行符连接所有状态信息并打印
     robot.sendTextMsg('\n'.join(status_lines), "43541810338@chatroom")
 
