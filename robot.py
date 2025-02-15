@@ -433,3 +433,26 @@ class Robot(Job):
 
     def sendXml(self) -> None:
         self.wcf.send_xml()
+
+    def check_duolingo(self) -> None:
+        user_map = self.dbUtils.getDuoLinGuoUser()
+        status_dict = check_duolingo_status(user_map)
+
+        # 将所有用户的打卡状态合并到一个字符串中
+        status_lines = []
+        for name, status in status_dict.items():
+            if status.get("status") == "error":
+                status_lines.append(f"{name}: {status['message']}")
+            else:
+                status_lines.append(f"{name} {status['status']}")
+
+        self.dbUtils.DuoLinGuoSignInsert(status_dict, "43541810338@chatroom")
+
+        # 使用换行符连接所有状态信息并打印
+        self.sendTextMsg("多邻国打卡结果", "43541810338@chatroom")
+        self.sendTextMsg('\n'.join(status_lines), "43541810338@chatroom")
+
+    def warn_duolingo(self) -> None:
+        user_map = self.dbUtils.getDuoLinGuoUser()
+        # 使用换行符连接所有状态信息并打印
+        self.sendTextMsg("没打卡的赶紧了", "43541810338@chatroom")
