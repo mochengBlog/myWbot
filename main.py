@@ -103,17 +103,7 @@ def sentToWxId():
     return "发送消息成功", 200
 
 
-def init_group_info_mysql(robot: Robot, db_utils: DBUtils) -> None:
-    db_utils.execute_query("truncate table room_info")
-    receivers = db_utils.execute_query("select room_id from messages group by room_id ");
-    for r in receivers:
-        # 获取字典r的值
-        r = r['room_id']
-        group_info = robot.getRoomInfo(r)
-        # 初始化群聊 {'wxid_1538135380812': '莫城', 'wxid_ej6qv9p6r6bg22': '乌苏里江畔', 'wxid_ytllv9po50bj12': 'CikL.'}
-        for wxid, name in group_info.items():
-            #查询该room_id 下的wxid是否存，若存在 判断name是否相等
-            db_utils.insert("room_info", {"room_id": r, "vxid": wxid, "name": name})
+
 
 
 
@@ -152,7 +142,7 @@ def main(chat_type: int):
     # 初始化群聊
     #init_group_info(robot)
     # 用于mysql
-    init_group_info_mysql(robot,db_utils)
+    # init_group_info_mysql(robot,db_utils)
 
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
@@ -163,7 +153,7 @@ def main(chat_type: int):
     # 每天 8 点发送天气预报
     # robot.onEveryTime("08:00", weather_report, robot=robot)
     # 每天 7 点初始化群聊
-    robot.onEveryTime("07:00", init_group_info_mysql, robot=robot)
+    robot.onEveryTime("07:00", robot.init_group_info_mysql)
 
     #robot.onEverySeconds(80, get_mj_info, robot=robot)
     # robot.onEveryTime("07:10", init_group_info_mysql(robot,db_utils), robot=robot)

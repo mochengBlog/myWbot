@@ -456,3 +456,14 @@ class Robot(Job):
         user_map = self.dbUtils.getDuoLinGuoUser()
         # 使用换行符连接所有状态信息并打印
         self.sendTextMsg("没打卡的赶紧了", "43541810338@chatroom")
+    def init_group_info_mysql(self) -> None:
+        self.dbUtils.execute_query("truncate table room_info")
+        receivers = self.dbUtils.execute_query("select room_id from messages group by room_id ");
+        for r in receivers:
+            # 获取字典r的值
+            r = r['room_id']
+            group_info = self.getRoomInfo(r)
+            # 初始化群聊 {'wxid_1538135380812': '莫城', 'wxid_ej6qv9p6r6bg22': '乌苏里江畔', 'wxid_ytllv9po50bj12': 'CikL.'}
+            for wxid, name in group_info.items():
+                #查询该room_id 下的wxid是否存，若存在 判断name是否相等
+                self.dbUtils.insert("room_info", {"room_id": r, "vxid": wxid, "name": name})
