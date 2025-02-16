@@ -255,8 +255,7 @@ class Robot(Job):
                 if "#签到" in content:
                     # groupSign.insert(msg.roomid, msg.sender, "已签到")
                     self.dbUtils.SignInsert(msg.roomid, msg.sender, 1)
-                    self.sendTextMsg("签到成功，明天也要努力呦！",
-                                     msg.roomid, msg.sender)
+                    self.sendTextMsg("签到成功，明天也要努力呦！",msg.roomid, msg.sender)
                 if "#多邻国启动" in content:
                     user_map = self.dbUtils.getDuoLinGuoUser()
                     status_dict = check_duolingo_status(user_map)

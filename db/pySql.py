@@ -138,13 +138,13 @@ class DBUtils(metaclass=SingletonMeta):  # 注意这里应用了元类
 
         if len(rows) == 0:
             print("插入签到")
-            self.execute_query("INSERT INTO group_sign (room_id, vxid, sign, sign_date, name) VALUES (%s, %s, %s, %s)",
+            self.execute_query("INSERT INTO group_sign (room_id, vxid, sign, sign_date, name) VALUES (%s, %s, %s, %s,%s)",
                                (room_id, vx_id, sign, date, name))
         else:
             print("更新签到")
             # 如果需要更新，可以在这里添加更新逻辑
             self.execute_query("UPDATE group_sign SET sign = %s WHERE room_id = %s AND vxid = %s AND sign_date = %s",
-                               (sign, room_id, vx_id, date, name))
+                               (sign, room_id, vx_id, date))
     def DuoLinGuoSignInsert(self, status_dict, room_id):
         # 获取今天日期
         if datetime.datetime.now().hour < 2:
