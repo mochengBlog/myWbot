@@ -253,11 +253,13 @@ class Robot(Job):
                     self.sendTextMsg("签到规则为:发送 #签到 即可签到,2点前算作昨天 ; 发送 #补签昨天 即可补签前一日",
                                      msg.roomid)
                 if "#签到" in content:
-                    # groupSign.insert(msg.roomid, msg.sender, "已签到")
-                    self.dbUtils.SignInsert(msg.roomid, msg.sender, 1)
-                    self.sendTextMsg("签到成功，明天也要努力呦！",msg.roomid, msg.sender)
-                if "#签到详情" in content:
-                    self.warn_sign()
+                    if "#签到详情" in content:
+                        self.warn_sign()
+                    else:
+                        # groupSign.insert(msg.roomid, msg.sender, "已签到")
+                        self.dbUtils.SignInsert(msg.roomid, msg.sender, 1)
+                        self.sendTextMsg("签到成功，明天也要努力呦！",msg.roomid, msg.sender)
+
 
                 if "#多邻国启动" in content:
                     user_map = self.dbUtils.getDuoLinGuoUser()
