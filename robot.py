@@ -256,6 +256,9 @@ class Robot(Job):
                     # groupSign.insert(msg.roomid, msg.sender, "已签到")
                     self.dbUtils.SignInsert(msg.roomid, msg.sender, 1)
                     self.sendTextMsg("签到成功，明天也要努力呦！",msg.roomid, msg.sender)
+                if "#签到详情" in content:
+                    self.warn_sign()
+
                 if "#多邻国启动" in content:
                     user_map = self.dbUtils.getDuoLinGuoUser()
                     status_dict = check_duolingo_status(user_map)
@@ -451,10 +454,40 @@ class Robot(Job):
         self.sendTextMsg("多邻国打卡结果", "43541810338@chatroom")
         self.sendTextMsg('\n'.join(status_lines), "43541810338@chatroom")
 
+    def warn_sign(self) -> None:
+        receivers = self.dbUtils.execute_query("select * from room_info where room_id = '43541810338@chatroom' ")
+        #拼接一个成员打开状态的
+        status_lines = []
+        for r in receivers:
+            # 获取字典r的值
+            vxid = r['vxid']
+            # 查询这个id今天打卡了没 status为空活 status为0 没打卡
+            status = self.dbUtils.execute_query(
+                "select * from group_sign where vxid = '" + vxid + "' and sign_date = '" + datetime.datetime.now().strftime(
+                    "%Y-%m-%d") + "' and room_id = '43541810338@chatroom' ")
+
+            if status:  # 检查status是否为空
+                # status是一个列表，取第一个元素（假设查询结果只有一条记录）
+                status_info = status[0]
+                if status_info['sign'] == 0:  # 注意字段名是'sign'，而不是'status'
+                    status_lines.append(f"{status_info['name']} 没打卡❌")
+                else:
+                    status_lines.append(f"{status_info['name']} 已打卡✔️")
+            else:
+                # 如果status为空，说明查询结果为空，没有打卡记录
+                status_lines.append(f"{r['name']} 没打卡❌")
+
+        self.sendTextMsg(datetime.datetime.now().strftime(
+                    "%Y-%m-%d")+" 日打卡结果", "43541810338@chatroom")
+        self.sendTextMsg('\n'.join(status_lines), "43541810338@chatroom")
+        #
     def warn_duolingo(self) -> None:
         user_map = self.dbUtils.getDuoLinGuoUser()
         # 使用换行符连接所有状态信息并打印
         self.sendTextMsg("没打卡的赶紧了", "43541810338@chatroom")
+
+    def jielong(self) -> None:
+        self.sendTextMsg("接龙", "43541810338@chatroom")
     def init_group_info_mysql(self) -> None:
         self.dbUtils.execute_query("truncate table room_info")
         receivers = self.dbUtils.execute_query("select room_id from messages group by room_id ");

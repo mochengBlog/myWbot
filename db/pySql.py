@@ -250,7 +250,28 @@ if __name__ == "__main__":
     # status_dict = check_duolingo_status(user_map)
     # 将所有用户的打卡状态合并到一个字符串中
     # db_utils.DuoLinGuoSignInsert(status_dict,"43541810338@chatroom")
-    db_utils.execute_query("truncate table room_info")
+
 
     # print('\n'.join(status_lines))
+    receivers = db_utils.execute_query("select * from room_info where room_id = '43541810338@chatroom' ")
+    # 拼接一个成员打开状态的 前面加序号
+    status_lines = []
+    for r in receivers:
+        # 获取字典r的值
+        vxid = r['vxid']
+        # 查询这个id今天打卡了没 status为空活 status为0 没打卡
+        status = db_utils.execute_query(
+            "select * from group_sign where vxid = '" + vxid + "' and sign_date = '" + datetime.datetime.now().strftime("%Y-%m-%d") + "' and room_id = '43541810338@chatroom' ")
 
+        if status:  # 检查status是否为空
+            # status是一个列表，取第一个元素（假设查询结果只有一条记录）
+            status_info = status[0]
+            if status_info['sign'] == 0:  # 注意字段名是'sign'，而不是'status'
+                status_lines.append(f"{status_info['name']} 没打卡❌")
+            else:
+                status_lines.append(f"{status_info['name']} 已打卡✔️")
+        else:
+            # 如果status为空，说明查询结果为空，没有打卡记录
+            status_lines.append(f"{r['name']} 没打卡❌")
+
+    print('\n'.join(status_lines))
