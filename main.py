@@ -166,10 +166,11 @@ def main(chat_type: int):
     #  robot.onEveryTime("18:00", ReportReminder.remind, robot=robot)
     # check_duolingo(robot, db_utils)`
     # 每天 23:00 提醒 签到详情
+    #robot.onEveryTime("7:00", robot.jielong)
     robot.onEveryTime("21:30", robot.check_duolingo)
     robot.onEveryTime("21:40", robot.warn_duolingo)
     robot.onEveryTime("23:00", robot.warn_sign)
-    robot.onEveryTime("7:00", robot.jielong)
+
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
