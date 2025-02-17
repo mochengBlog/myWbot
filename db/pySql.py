@@ -244,13 +244,13 @@ if __name__ == "__main__":
     #         messages.append(f"{sender_name}说:{message}")
     # print(messages)
     # db_utils.SignInsertBQ('111', '123', 1, "前天");
-    user_map = db_utils.getDuoLinGuoUser()
+    # user_map = db_utils.getDuoLinGuoUser()
 
-    print(user_map)
-    status_dict = check_duolingo_status(user_map)
+    # print(user_map)
+    # status_dict = check_duolingo_status(user_map)
     # 将所有用户的打卡状态合并到一个字符串中
-    db_utils.DuoLinGuoSignInsert(status_dict,"43541810338@chatroom")
-
+    # db_utils.DuoLinGuoSignInsert(status_dict,"43541810338@chatroom")
+    db_utils.execute_query("truncate table room_info")
 
     # print('\n'.join(status_lines))
 

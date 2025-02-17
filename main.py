@@ -153,6 +153,7 @@ def main(chat_type: int):
     # 每天 8 点发送天气预报
     # robot.onEveryTime("08:00", weather_report, robot=robot)
     # 每天 7 点初始化群聊
+    robot.init_group_info_mysql()
     robot.onEveryTime("07:00", robot.init_group_info_mysql)
 
     #robot.onEverySeconds(80, get_mj_info, robot=robot)
