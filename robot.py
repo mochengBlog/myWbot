@@ -457,7 +457,8 @@ class Robot(Job):
         self.sendTextMsg('\n'.join(status_lines), "43541810338@chatroom")
 
     def warn_sign(self) -> None:
-        receivers = self.dbUtils.execute_query("select * from room_info where room_id = '43541810338@chatroom' ")
+        self.check_duolingo()
+        receivers = self.dbUtils.execute_query("select * from room_info where room_id = '43541810338@chatroom' and vxid not in ('wxid_rwfxwgp8f6t122', 'wxid_6mz5zqj1s8j122', 'wxid_ej6qv9p6r6bg22') ")
         #拼接一个成员打开状态的
         status_lines = []
         for r in receivers:
