@@ -41,7 +41,18 @@ class DBConnectionPool(metaclass=SingletonMeta):
 
     def get_connection(self):
         try:
-            return self.pool.get(block=False)
+            connection = self.pool.get(block=False)
+            # 检查连接是否有效，如果无效则重新创建
+            try:
+                connection.ping(reconnect=True)
+            except:
+                # 如果ping失败，创建新连接
+                try:
+                    connection = pymysql.connect(**self.config)
+                except MySQLError as e:
+                    print(f"Error recreating connection: {e}")
+                    return None
+            return connection
         except Empty:
             print("No available connections in the pool.")
             return None
@@ -71,6 +82,16 @@ class DBUtils(metaclass=SingletonMeta):  # 注意这里应用了元类
         if connection is None:
             raise Exception("No available database connections.")
         try:
+            # 尝试ping连接以确保它仍然有效
+            try:
+                connection.ping(reconnect=True)
+            except:
+                # 如果ping失败，获取新连接
+                self.db_pool.release_connection(connection)
+                connection = self.get_db_connection()
+                if connection is None:
+                    raise Exception("Failed to get a valid database connection.")
+            
             with connection.cursor() as cursor:
                 cursor.execute(query, params or ())
                 result = cursor.fetchall()
